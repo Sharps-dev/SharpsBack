@@ -4,7 +4,7 @@
   "description": "a back end repo for sharps backend services",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/Sharps-dev/SharpsBack#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "chai": "^4.3.4",
+    "express": "^4.17.1",
+    "mocha": "^8.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
