@@ -19,5 +19,17 @@
   "homepage": "https://github.com/Sharps-dev/SharpsBack#readme",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-angular": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^5.1.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/conventional-changelog-angular"
+    }
   }
 }
