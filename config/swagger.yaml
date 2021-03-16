@@ -13,6 +13,35 @@ paths:
         '200':
           description: OK
 
+  /user:
+    post:
+      summary: user signup
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/user'
+                - type: object
+                  properties:
+                    password:
+                      type: string
+              
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/user'
+                  token:
+                    type: string
+
 
 components:
   securitySchemes:
@@ -32,6 +61,7 @@ components:
           type: string
         avatar:
           type: string
+          format: base64
         username:
           type: string
         email:
