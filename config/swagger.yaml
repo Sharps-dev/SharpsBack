@@ -1,0 +1,39 @@
+openapi: '3.0.3'
+info:
+  title: SharpsBack
+  version: '1.0'
+  contact:
+    email: email
+
+  
+paths:
+  /test:
+    get:
+      responses:
+        '200':
+          description: OK
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      description: Auth token ( Bearer + " " + Value )
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    user:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        avatar:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
