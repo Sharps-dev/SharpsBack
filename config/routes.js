@@ -8,7 +8,7 @@ module.exports = (app) => {
 
     // USER ROUTES
     app.get(`/user`, UserController.getAll);
-    app.post(`/user`, UserController.insert)
+    app.post(`/user`, UserController.signUp);
     app.put(`/user/:id`, UserController.update);
     app.delete(`/user/:id`, UserController.delete);
 

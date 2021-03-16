@@ -3,17 +3,21 @@ const Mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const Schema = Mongoose.Schema;
+const newToken = require('../utils/jwt/newToken.js');
 
 const schema = new Schema(
     {
         firstname: {
-            type: String
+            type: String,
+            trim: true
         },
         lastname: {
-            type: String
+            type: String,
+            trim: true
         },
         username: {
             type: String,
+            trim: true,
             unique: true,
             required: true
         },
@@ -25,8 +29,7 @@ const schema = new Schema(
         },
         password: {
             type: String,
-            required: true,
-            validate: [p => validator.isStrongPassword(p)]
+            required: true
         },
         avatar: {
             type: String,
@@ -48,9 +51,10 @@ schema.plugin(uniqueValidator);
 schema.pre("save", async function (next) {
     try {
         const user = this;
-        if (!user.isModified("password")) return next();
-        const hashPassword = await bcrypt.hash(user.password, 8);
-        user.password = hashPassword;
+        if (user.isModified("password")) {
+            const hashPassword = await bcrypt.hash(user.password, 8);
+            user.password = hashPassword;
+        }
         next();
     } catch (e) {
         console.error(e);
@@ -66,12 +70,24 @@ schema.methods.checkPassword = async function (password) {
         return next(e);
     }
 };
+schema.methods.generateToken = function () {
+    const TOKEN_COUNT_LIMIT = 10;
+    const user = this;
+
+    const token = newToken(user);
+    user.tokens.push(token);
+    if (user.tokens.length > TOKEN_COUNT_LIMIT)
+        user.tokens.shift();
+
+    return token;
+}
 schema.methods.toJSON = function () {
     var obj = this.toObject();
     delete obj.password;
     delete obj.createdAt;
     delete obj.updatedAt;
     delete obj.__v;
+    delete obj._id;
     delete obj.tokens;
     return obj;
 };

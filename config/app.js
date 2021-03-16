@@ -9,12 +9,12 @@ const path = require('path');
 const initiateApp = async () => {
 
     const app = express();
+    app.use(bodyParser.json());
+
     setRoutes(app);
     databaseConnect();
     const swagger_path = path.resolve(__dirname, './swagger.yaml');
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(await swaggerParser.bundle(swagger_path), { explorer: true }));
-
-    app.use(bodyParser.json());
 
     //error middleware
     app.use(function (err, req, res, next) {
