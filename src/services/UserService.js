@@ -17,12 +17,6 @@ class UserService extends Service {
 async function login(data) {
   try {
     const { password, email } = data;
-    if (!password || !email)
-      return {
-        error: true,
-        status: 400,
-        message: "email and  password are essential",
-      };
     const user = await this.model.findOne({ email });
     if (!user)
       return {
@@ -31,7 +25,7 @@ async function login(data) {
         message: "check your email",
       };
     const checkUserPassword = await user.checkPassword(password);
-    if (!checkPassword)
+    if (!checkUserPassword)
       return {
         error: true,
         status: 400,
