@@ -6,7 +6,6 @@ const checkToken = require("./checkToken");
  * @param {Object} req
  * @param {Object} res
  * @param {Function} next
- *
  */
 const protect = async (req, res, next) => {
   const bearer = req.headers.authorization;
@@ -24,10 +23,10 @@ const protect = async (req, res, next) => {
     return res.status(401).end();
   }
 
-  const user = await User.findById(payload.id).select("-password").lean().exec();
-
+  const user = await User.findById(payload.id).lean().exec();
   if (!user) return res.status(401).end();
-
+  const checkToken = user.tokens.includes(token);
+  if (!checkToken) return res.status(400).json({ message: "not valid token" }).end();
   req.user = user;
   next();
 };
