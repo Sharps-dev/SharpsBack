@@ -3,7 +3,7 @@ info:
   title: SharpsBack
   version: '1.0'
   contact:
-    email: email
+    email: email@email.com
 
   
 paths:
@@ -13,7 +13,7 @@ paths:
         '200':
           description: OK
 
-  /user:
+  /user/signup:
     post:
       summary: user signup
       tags:
@@ -27,8 +27,37 @@ paths:
                 - type: object
                   properties:
                     password:
-                      type: string
-              
+                      type: string  
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/user'
+                  token:
+                    type: string
+
+  /user/login:
+    post:
+      summary: user login
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/user/properties/email'
+                username:
+                  $ref: '#/components/schemas/user/properties/username'
+                password:
+                  type: string
       responses:
         '201':
           description: OK
