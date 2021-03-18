@@ -7,10 +7,11 @@ module.exports = (app) => {
     });
 
     // USER ROUTES
-    app.get(`/user`, UserController.getAll);
-    app.post(`/user`, UserController.signUp);
-    app.put(`/user/:id`, UserController.update);
-    app.delete(`/user/:id`, UserController.delete);
+    //app.get(`/user`, UserController.getAll);
+    app.post(`/user/signup`, UserController.signUp);
+    app.post(`/user/login`, UserController.login);
+    //app.put(`/user/:id`, UserController.update);
+    //app.delete(`/user/:id`, UserController.delete);
 
     
 }

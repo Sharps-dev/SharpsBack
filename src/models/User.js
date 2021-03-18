@@ -1,4 +1,4 @@
-const uniqueValidator = require("mongoose-unique-validator");
+﻿const uniqueValidator = require("mongoose-unique-validator");
 const Mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
@@ -15,17 +15,17 @@ const schema = new Schema(
             type: String,
             trim: true
         },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            validate: [e => validator.isEmail(e), 'ایمیل نامعتبر است']
+        },
         username: {
             type: String,
             trim: true,
             unique: true,
             required: true
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            validate: [e => validator.isEmail(e)]
         },
         password: {
             type: String,
@@ -34,7 +34,7 @@ const schema = new Schema(
         avatar: {
             type: String,
             default: null,
-            validate: [i => i == null || validator.isBase64(i)]
+            validate: [i => i == null || validator.isBase64(i), "invalid base64 {PATH}"]
         },
         tokens: [
             {
@@ -45,7 +45,7 @@ const schema = new Schema(
     },
     { timestamps: true }
 );
-schema.plugin(uniqueValidator);
+schema.plugin(uniqueValidator, { message: 'تکراری است {PATH}' });
 
 // methods
 schema.pre("save", async function (next) {
@@ -79,6 +79,7 @@ schema.methods.generateToken = function () {
     if (user.tokens.length > TOKEN_COUNT_LIMIT)
         user.tokens.shift();
 
+    user.save();
     return token;
 }
 schema.methods.toJSON = function () {
