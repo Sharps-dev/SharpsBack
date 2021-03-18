@@ -8,32 +8,36 @@ class Controller {
         this.delete = this.delete.bind(this);
     }
 
-    async getAll(req, res) {
-        return res.status(200).send(await this.service.getAll(req.query));
+    async getAll(req, res, next) {
+        try {
+            return res.status(200).json(await this.service.getAll(req.query)).end();
+        } catch (err) { next(err); }
     }
 
-    async insert(req, res) {
-        let response = await this.service.insert(req.body);
-        if (response.error) return res.status(response.statusCode).send(response);
-        return res.status(201).send(response);
+    async insert(req, res, next) {
+        try {
+            const item = await this.service.insert(req.body);
+            return res.status(201).json(item).end();
+
+        } catch (err) { next(err); }
     }
 
-    async update(req, res) {
-        const { id } = req.params;
+    async update(req, res, next) {
+        try {
+            const { id } = req.params;
+            const item = await this.service.update(id, req.body);
+            return res.status(202).json(item);
 
-        let response = await this.service.update(id, req.body);
-
-        return res.status(response.statusCode).send(response);
+        } catch (err) { next(err); }
     }
 
-    async delete(req, res) {
-        const { id } = req.params;
+    async delete(req, res, next) {
+        try {
+            const { id } = req.params;
+            await this.service.delete(id);
+            return res.status(202);
 
-        let response = await this.service.delete(id);
-
-        return res.status(response.statusCode).send(response);
+        } catch (err) { next(err); }
     }
-
 }
-
 module.exports = Controller;
