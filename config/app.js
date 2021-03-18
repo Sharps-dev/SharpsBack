@@ -5,6 +5,7 @@ const databaseConnect = require('./database');
 const swaggerUi = require("swagger-ui-express");
 const swaggerParser = require('swagger-parser');
 const path = require('path');
+const AppError = require('../src/helpers/AppError');
 
 const initiateApp = async () => {
 
@@ -16,15 +17,7 @@ const initiateApp = async () => {
     const swagger_path = path.resolve(__dirname, './swagger.yaml');
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(await swaggerParser.bundle(swagger_path), { explorer: true }));
 
-    //error middleware
-    app.use(function (err, req, res, next) {
-        if (err.errors) {
-            err.message = err.errors[Object.keys(err.errors)[0]].message;
-            err.code = 400;
-        } else if (!err.code || err.code >= 600)
-            err.code = 503;
-        res.status(err.code).json({ error: err.message });
-    });
+    app.use(AppError.Handler);
 
     return app
 }
