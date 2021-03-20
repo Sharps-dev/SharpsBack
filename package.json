@@ -4,7 +4,7 @@
   "description": "a back end repo for sharps backend services",
   "main": "server.js",
   "scripts": {
-    "test": "env-cmd -f ./env/test.env  mocha --reporter spec ",
+    "test": "env-cmd -f ./env/test.env  mocha --reporter spec  --timeout 5000",
     "start": "node server.js",
     "dev": "nodemon -r dotenv/config server.js"
   },

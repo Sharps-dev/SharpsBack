@@ -10,10 +10,9 @@ const signUpUser = { firstname: "John2", lastname: "Doe", email: "john2@doe.com"
 // create new user ✔
 describe("User tests", () => {
   // remove all DB data 🔥
-  before(async () => {
+  before(async function () {
     await User.deleteMany();
     console.log("before run user test ");
-    await new User(initUser).save();
   });
 
   it("signUp user 🙂", async function () {
@@ -22,10 +21,34 @@ describe("User tests", () => {
     expect(res.body.password).equal(undefined);
   });
 
-  it("login User with email ", async function () {
+  it("fail create user with duplicate email 💢 ", async function () {
+    const res = await request.post("/user/signup").send(signUpUser);
+    expect(res.status).equal(400);
+  });
+
+  it("fail create user with duplicate username 💢 ", async function () {
+    const res = await request.post("/user/signup").send({ ...signUpUser, email: "johndoe3.test.com" });
+    expect(res.status).equal(400);
+  });
+
+  it("login User with email 📧 ", async function () {
+    await new User(initUser).save();
     const res = await request.post("/user/login").send({ email: initUser.email, password: initUser.password });
     const result = res.body;
     expect(res.status).equal(200);
     expect(result.token).to.not.equal(null);
+  });
+
+  it("login User with username ⤴ ", async function () {
+    const res = await request.post("/user/login").send({ username: initUser.username, password: initUser.password });
+    const result = res.body;
+    expect(res.status).equal(200);
+    expect(result.token).to.not.equal(null);
+  });
+
+  it("fail login with wrong email 💢", async function () {
+    const res = await request.post("/user/login").send({ email: "john@tesss.com", password: initUser.password });
+    const result = res.body;
+    expect(res.status).equal(400);
   });
 });
