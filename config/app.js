@@ -4,7 +4,7 @@ const databaseConnect = require("./database");
 const swaggerUi = require("swagger-ui-express");
 const swaggerParser = require("swagger-parser");
 const path = require("path");
-const AppError = require("../src/helpers/AppError");
+const { handleError } = require("../src/helpers/AppError");
 
 const initiateApp = async () => {
   const app = express();
@@ -15,7 +15,9 @@ const initiateApp = async () => {
   const swagger_path = path.resolve(__dirname, "./swagger.yaml");
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(await swaggerParser.bundle(swagger_path), { explorer: true }));
 
-  app.use(AppError.Handler);
+  app.use((err, req, res, next) => {
+    handleError(err, res);
+  });
 
   return app;
 };

@@ -1,11 +1,12 @@
 const express = require("express");
 const setRoutes = require("./routes");
 const databaseConnect = require("./database");
-const AppError = require("../src/helpers/AppError");
+const { handleError } = require("../src/helpers/AppError");
 const app = express();
 databaseConnect();
 app.use(express.json());
 setRoutes(app);
-app.use(AppError.Handler);
-
+app.use((err, req, res, next) => {
+  handleError(err, res);
+});
 module.exports = app;
