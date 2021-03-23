@@ -35,6 +35,18 @@ class UserService extends Service {
       throw new AppError("somthing wrong", 500);
     }
   }
+
+  async logoutAll(req) {
+    try {
+      const { user } = req;
+      user.tokens = [];
+      await user.save();
+      return { message: "logout all devices successful" };
+    } catch (e) {
+      console.error(e);
+      throw new AppError("somthing wrong", 500);
+    }
+  }
 }
 
 module.exports = UserService;
