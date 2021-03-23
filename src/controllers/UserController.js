@@ -60,7 +60,8 @@ class UserController extends Controller {
   }
   async logoutAll(req, res, next) {
     try {
-      const result = await this.service.logoutAll(req);
+      const { user } = req;
+      const result = await this.service.logoutAll(user);
       return res.status(200).json(result).end();
     } catch (e) {
       console.error(e);

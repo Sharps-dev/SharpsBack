@@ -24,9 +24,8 @@ class UserService extends Service {
     return { user, token };
   }
 
-  async logout(req) {
+  async logout({ user, token }) {
     try {
-      const { user, token } = req;
       user.tokens = user.tokens.filter((t) => t != token);
       await user.save();
       return { message: "logout successful" };
@@ -36,9 +35,8 @@ class UserService extends Service {
     }
   }
 
-  async logoutAll(req) {
+  async logoutAll(user) {
     try {
-      const { user } = req;
       user.tokens = [];
       await user.save();
       return { message: "logout all devices successful" };
