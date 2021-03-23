@@ -71,6 +71,28 @@ paths:
                   token:
                     type: string
 
+  /user/logout:
+    post:
+      summary: logout current session
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
+  /user/logoutall:
+    post:
+      summary: logout all sessions
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+
 
 components:
   securitySchemes:
