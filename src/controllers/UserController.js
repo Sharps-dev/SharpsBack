@@ -37,12 +37,13 @@ class UserController extends Controller {
       if (!password || !email || !username) throw new AppError("لطفا موارد الزامی را وارد نمایید", 400);
       else {
         const newUser = await this.service.insert(req.body);
-        return res
-          .json({
-            user: newUser,
-            token: newUser.generateToken(),
-          })
-          .end();
+          return res
+              .status(201)
+              .json({
+                  user: newUser,
+                  token: newUser.generateToken(),
+              })
+              .end();
       }
     } catch (err) {
       next(err);
