@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { AppError } = require("../../helpers/AppError");
 const { jwtSecret } = require("../../../config");
 const checkToken = async (token) => {
   try {
@@ -6,7 +7,7 @@ const checkToken = async (token) => {
     return verify;
   } catch (e) {
     console.error(e);
-    throw new Error("somthing wrong");
+    throw new Error(e);
   }
 };
 

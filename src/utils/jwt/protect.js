@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 const checkToken = require("./checkToken");
+const { AppError } = require("../../helpers/AppError");
 
 /**
  * prodtect middelware for check validation
@@ -8,26 +9,23 @@ const checkToken = require("./checkToken");
  * @param {Function} next
  */
 const protect = async (req, res, next) => {
+  try {
   const bearer = req.headers.authorization;
-
-  if (!bearer || !bearer.startsWith("Bearer ")) {
-    return res.status(401).end();
-  }
+  if (!bearer || !bearer.startsWith("Bearer ")) throw new AppError("not auth", 401);
 
   const token = bearer.split("Bearer ")[1].trim();
-  let payload;
-  try {
-    payload = await checkToken(token);
+    const payload = await checkToken(token);
+    if (!payload) next(new AppError("not auth", 401));
+    const user = await User.findById(payload._id).exec();
+    if (!user) next(new AppError("not auth", 401));
+    const checkTokenUser = user.tokens.includes(token);
+    if (!checkTokenUser) next(new AppError("not valid token", 401));
+    req.user = user;
+    req.token = token;
+    next();
   } catch (e) {
     console.error(e);
-    return res.status(401).end();
+    next(e);
   }
-
-  const user = await User.findById(payload.id).lean().exec();
-  if (!user) return res.status(401).end();
-  const checkToken = user.tokens.includes(token);
-  if (!checkToken) return res.status(400).json({ message: "not valid token" }).end();
-  req.user = user;
-  next();
 };
 module.exports = protect;
