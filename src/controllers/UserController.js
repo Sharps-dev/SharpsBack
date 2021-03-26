@@ -1,4 +1,4 @@
-const Controller = require("./Controller");
+﻿const Controller = require("./Controller");
 const UserService = require("./../services/UserService");
 const User = require("./../models/User");
 const { AppError } = require("../helpers/AppError");
@@ -22,7 +22,7 @@ class UserController extends Controller {
   async login(req, res, next) {
     try {
       const { password, email, username } = req.body;
-      if (!password || (!email && !username)) throw new AppError("invalid credentials", 400);
+      if (!password || (!email && !username)) throw new AppError("عبارات وارد شده صحیح نیستند", 400);
 
       const response = await this.service.login(req.body);
       return res.status(200).send(response).end();
@@ -34,7 +34,7 @@ class UserController extends Controller {
   async signUp(req, res, next) {
     try {
       const { password, username, email } = req.body;
-      if (!password || !email || !username) throw new AppError("please insert essential field", 400);
+      if (!password || !email || !username) throw new AppError("لطفا موارد الزامی را وارد نمایید", 400);
       else {
         const newUser = await this.service.insert(req.body);
         return res
