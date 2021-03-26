@@ -10,6 +10,8 @@ class UserController extends Controller {
     super(service);
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
+    this.logout = this.logout.bind(this);
+    this.logoutAll = this.logoutAll.bind(this);
   }
   /**
    *
@@ -44,6 +46,26 @@ class UserController extends Controller {
       }
     } catch (err) {
       next(err);
+    }
+  }
+
+  async logout(req, res, next) {
+    try {
+      const result = await this.service.logout(req);
+      return res.status(200).json(result).end();
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
+  async logoutAll(req, res, next) {
+    try {
+      const { user } = req;
+      const result = await this.service.logoutAll(user);
+      return res.status(200).json(result).end();
+    } catch (e) {
+      console.error(e);
+      next(e);
     }
   }
 }

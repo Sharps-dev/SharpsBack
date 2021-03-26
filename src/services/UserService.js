@@ -23,6 +23,28 @@ class UserService extends Service {
     const token = user.generateToken();
     return { user, token };
   }
+
+  async logout({ user, token }) {
+    try {
+      user.tokens = user.tokens.filter((t) => t != token);
+      await user.save();
+      return { message: "logout successful" };
+    } catch (e) {
+      console.error(e);
+      throw new AppError("somthing wrong", 500);
+    }
+  }
+
+  async logoutAll(user) {
+    try {
+      user.tokens = [];
+      await user.save();
+      return { message: "logout all devices successful" };
+    } catch (e) {
+      console.error(e);
+      throw new AppError("somthing wrong", 500);
+    }
+  }
 }
 
 module.exports = UserService;
