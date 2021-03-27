@@ -4,10 +4,9 @@
   "description": "a back end repo for sharps backend services",
   "main": "server.js",
   "scripts": {
-    "test": "env NODE_ENV=test mocha --timeout 5000 --exit",
+    "test": "env NODE_ENV=test mocha -r dotenv/config --timeout 10000 --exit",
     "start": "env NODE_ENV=production node server.js",
-    "dev": "env NODE_ENV=development nodemon -r dotenv/config server.js",
-    "dev:test": "env NODE_ENV=test mocha -r dotenv/config --timeout 10000 --exit"
+    "dev": "env NODE_ENV=development nodemon -r dotenv/config server.js"
   },
   "repository": {
     "type": "git",
