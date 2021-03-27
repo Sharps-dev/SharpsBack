@@ -20,7 +20,7 @@ describe("User tests", () => {
 
   it("signUp user 🙂", async function () {
     const res = await request.post("/user/signup").send(signUpUser);
-    expect(res.status).equal(200);
+    expect(res.status).equal(201);
     expect(res.body.password).equal(undefined);
   });
 
