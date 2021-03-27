@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: test
     strategy:
       matrix:
         node-version: [14.x]
@@ -23,11 +22,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: echo $NODE_ENV
       - run: npm test
-
+        env:
+          PORT: ${{secrets.PORT}}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          LOCAL_URL: ${{secrets.LOCAL_URL}}
+          TEST_DB: ${{secrets.TEST_DB}}
+          
   deploy:
-    environment: production
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -37,3 +39,8 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "sharpsback"
           heroku_email: ${{secrets.HEROKU_EMAIL}}
+        env:
+          HD_PORT: ${{secrets.PORT}}
+          HD_JWT_SECRET: ${{secrets.JWT_SECRET}}
+          HD_PUBLIC_URL: ${{secrets.PUBLIC_URL}}
+          HD_PUBLIC_DB: ${{secrets.PUBLIC_DB}}
