@@ -1,17 +1,24 @@
-const enviornmentSetup = process.env.NODE_ENV;
-const testConfig = {
-  NODE_ENV: enviornmentSetup,
-  port: process.env.PORT,
-  dbUrl: process.env.TEST_DB,
-  url: process.env.LOCAL_URL,
-  jwtSecret: process.env.jwt,
-};
-if (enviornmentSetup == "test") module.exports = testConfig;
-else
-  module.exports = {
+const baseConfig = {
     NODE_ENV: process.env.NODE_ENV,
     port: process.env.PORT,
-    dbUrl: process.env.NODE_ENV == "dev" ? process.env.LOCAL_DB : process.env.PUBLIC_DB,
-    url: process.env.NODE_ENV == "dev" ? process.env.LOCAL_URL : process.env.PUBLIC_URL,
-    jwtSecret: process.env.jwt,
-  };
+    jwtSecret: process.env.JWT_SECRET
+};
+const configs = {
+    development: {
+        ...baseConfig,
+        url: process.env.LOCAL_URL,
+        dbUrl: process.env.LOCAL_DB
+    },
+    production: {
+        ...baseConfig,
+        url: process.env.PUBLIC_URL,
+        dbUrl: process.env.PUBLIC_DB
+    },
+    test: {
+        ...baseConfig,
+        url: process.env.LOCAL_URL,
+        dbUrl: process.env.TEST_DB
+    },
+}
+
+module.exports = configs[process.env.NODE_ENV];
