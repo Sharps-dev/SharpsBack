@@ -33,6 +33,26 @@ describe("Mailer tests", async function() {
 		expect(signedUpUser.isVerified).to.be.true;
 	});
 
+	it("sends reset password email", async function () {
+		await request.post("/user/resetpassword").send({ email: user.email });
+		const sentMails = nodemailerMock.mock.getSentMail();
+		expect(sentMails.length).to.equal(1);
+		sentMail = sentMails[0];
+		expect(sentMail.to).to.equal(user.email);
+	});
+
+	it("resets the password of an account", async function () {
+		const res = await request.post("/user/password").send({
+			password: 'newPass',
+			retryPassword: 'newPass',
+			token: ((sentMail.context.link).split("="))[1]
+		});
+		expect(res.status).to.equal(200);
+		const signedUpUser = await User.findOne({ email: user.email });
+		const checkPass = await signedUpUser.checkPassword('newPass');
+		expect(checkPass).to.be.true;
+	});
+
 	afterEach(async () => nodemailerMock.mock.reset());
 
 	after(async function () {
