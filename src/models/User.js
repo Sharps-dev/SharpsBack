@@ -41,7 +41,11 @@ const schema = new Schema(
                 type: String,
                 required: true
             }
-        ]
+        ],
+        isVerified: {
+            type: Boolean,
+            default: false
+        }
     },
     { timestamps: true }
 );
@@ -70,16 +74,19 @@ schema.methods.checkPassword = async function (password) {
         return next(e);
     }
 };
-schema.methods.generateToken = function () {
+schema.methods.generateToken = function (saveToken = true) {
     const TOKEN_COUNT_LIMIT = 10;
     const user = this;
 
     const token = newToken(user);
-    user.tokens.push(token);
-    if (user.tokens.length > TOKEN_COUNT_LIMIT)
-        user.tokens.shift();
 
-    user.save();
+    if (saveToken) {
+        user.tokens.push(token);
+        if (user.tokens.length > TOKEN_COUNT_LIMIT)
+            user.tokens.shift();
+        user.save();
+    }
+    
     return token;
 }
 schema.methods.toJSON = function () {
@@ -90,6 +97,7 @@ schema.methods.toJSON = function () {
     delete obj.__v;
     delete obj._id;
     delete obj.tokens;
+    delete obj.isVerified;
     return obj;
 };
 

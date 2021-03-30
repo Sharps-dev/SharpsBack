@@ -31,7 +31,19 @@ class MailConfig {
     }
 }
 
-const mailConfigs = {};
+const mailConfigs = {
+    signUp:
+        new MailConfig(
+            'Verify Account',
+            {
+                header: 'Welcome!',
+                imgSrc: 'https://img.icons8.com/clouds/100/000000/handshake.png',
+                text: 'Welcome to ' + config.appName + '.Please verify your account.',
+                buttonText: 'Verify Account'
+            },
+            function (user) { return config.url + 'user/verify?t=' + user.generateToken(false); }
+        )
+};
 
 class Mailer {
     constructor(transportOptions) {
