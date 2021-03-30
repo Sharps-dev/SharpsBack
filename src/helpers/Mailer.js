@@ -41,7 +41,19 @@ const mailConfigs = {
                 text: 'Welcome to ' + config.appName + '.Please verify your account.',
                 buttonText: 'Verify Account'
             },
-            function (user) { return config.url + 'user/verify?t=' + user.generateToken(false); }
+            function (user) { return config.url + 'user/verify?t=' + user.generateToken({ saveToken: false }); }
+        ),
+    passwordReset:
+        new MailConfig(
+            'Reset Password',
+            {
+                header: 'Reset Password',
+                imgSrc: 'https://img.icons8.com/clouds/100/000000/password.png',
+                text: 'If you did not request to change your password, you can ignore this email and your password will not be changed.\
+                      <br />This link will expire in 5 minutes',
+                buttonText: 'Reset Password'
+            },
+            function (user) { return config.url + 'user/resetpassword?t=' + user.generateToken({ saveToken: false, expiresIn: '5m' }); }
         )
 };
 
@@ -73,7 +85,6 @@ class Mailer {
         await this.transporter.sendMail(mailConfig);
     }
     attachListeners() {
-        
         for (const configName in mailConfigs) {
             eventEmmiter.on(configName, async (newUser) => {
                 await this.sendMail(configName, newUser);

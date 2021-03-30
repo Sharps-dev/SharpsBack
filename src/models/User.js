@@ -74,11 +74,17 @@ schema.methods.checkPassword = async function (password) {
         return next(e);
     }
 };
-schema.methods.generateToken = function (saveToken = true) {
+schema.methods.generateToken = function (options) {
     const TOKEN_COUNT_LIMIT = 10;
+    let saveToken = true;
+    let expiresIn;
+    if (options) {
+        saveToken = options.saveToken;
+        expiresIn = options.expiresIn;
+    }
     const user = this;
 
-    const token = newToken(user);
+    const token = newToken(user, expiresIn);
 
     if (saveToken) {
         user.tokens.push(token);

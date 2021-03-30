@@ -15,6 +15,9 @@ class UserController extends Controller {
     this.logout = this.logout.bind(this);
     this.logoutAll = this.logoutAll.bind(this);
       this.verifyAccount = this.verifyAccount.bind(this);
+      this.requestResetPassword = this.requestResetPassword.bind(this);
+      this.serveResetPasswordPage = this.serveResetPasswordPage.bind(this);
+      this.updatePassword = this.updatePassword.bind(this);
   }
   /**
    *
@@ -85,6 +88,103 @@ class UserController extends Controller {
             return res
                 .status(200)
                 .json("Your account (" + user.email + ") is successfully verified.")
+                .end();
+
+        } catch (err) { next(err); }
+    }
+    async requestResetPassword(req, res, next) {
+        try {
+            const { email } = req.body;
+            const user = await this.service.getOne({ email });
+            if (user && user.isVerified)
+                eventEmmiter.emit('passwordReset', user);
+
+            return res
+                .status(200)
+                .json("If the email you specified exists in our system and is verified, we've sent a password reset link to it.")
+                .end
+
+        } catch (err) { next(err); }
+    }
+    async serveResetPasswordPage(req, res, next) {
+        try {
+            const { _id } = await checkToken(req.query.t);
+            const user = await this.service.getOne({ _id });
+            if (!user)
+                throw new AppError('invalid link', 404);
+
+            //temporary
+            const html = `
+            <html>
+            <head>
+                <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+                <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+                <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+            </head>
+             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+             <div class="form-gap"></div>
+            <div class="container">
+	            <div class="row">
+		            <div class="col-md-4 col-md-offset-4">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <div class="text-center">
+                              <h3><i class="fa fa-lock fa-4x"></i></h3>
+                              <h2 class="text-center">Forgot Password?</h2>
+                              <p>You can reset your password here.</p>
+                              <div class="panel-body">
+                                <form id="register-form" role="form" autocomplete="off" class="form" method="post" action="/user/password">
+                                  <div class="form-group">
+                                    <div class="input-group">
+                                      <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                                      <input id="password" name="password" placeholder="Password" class="form-control"  type="password">
+                                    </div>
+                                    <div class="input-group">
+                                      <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                                      <input id="retryPassword" name="retryPassword" placeholder="Re enter password" class="form-control"  type="password">
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <input class="btn btn-lg btn-primary btn-block" value="Reset Password" type="submit">
+                                  </div>
+                                  <input type="hidden" class="hide" name="token" id="token" value="${req.query.t}"> 
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+	            </div>
+            </div>
+            </html>
+        `;
+
+            return res
+                .send(html)
+                .end();
+
+        } catch { next(new AppError('link expired', 404)); }
+    }
+    async updatePassword(req, res, next) {
+        try {
+            const { password, retryPassword, token } = req.body;
+            if (!token)
+                throw new AppError('Unauthorized', 401);
+            if (!password || !retryPassword)
+                throw new AppError('Fill in the required fields', 400);
+            if (password !== retryPassword)
+                throw new AppError('Passwords do not match', 400);
+
+            const { _id } = await checkToken(token);
+            const user = await this.service.getOne({ _id });
+            if (!user)
+                throw new AppError('Unauthorized', 401);
+
+            user.password = password;
+            await user.save();
+            return res
+                .status(200)
+                .json("Password is reset successfully.")
                 .end();
 
         } catch (err) { next(err); }
