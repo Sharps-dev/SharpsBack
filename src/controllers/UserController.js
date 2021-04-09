@@ -10,6 +10,7 @@ class UserController extends Controller {
     super(service);
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
+    this.update = this.update.bind(this);
     this.logout = this.logout.bind(this);
     this.logoutAll = this.logoutAll.bind(this);
   }
@@ -37,19 +38,38 @@ class UserController extends Controller {
       if (!password || !email || !username) throw new AppError("لطفا موارد الزامی را وارد نمایید", 400);
       else {
         const newUser = await this.service.insert(req.body);
-          return res
-              .status(201)
-              .json({
-                  user: newUser,
-                  token: newUser.generateToken(),
-              })
-              .end();
+        return res
+          .status(201)
+          .json({
+            user: newUser,
+            token: newUser.generateToken(),
+          })
+          .end();
       }
     } catch (err) {
       next(err);
     }
   }
 
+  async update(req, res, next) {
+    try {
+      const validUpdate = ["firstname", "lastname", "password", "avatar"];
+      const { body } = req;
+      if (Object.keys(body).length == 0) next(new AppError("enter some valid thing", 400));
+      const validObject = {};
+      validUpdate.forEach((v) => {
+        if (body[v]) validObject[v] = body[v];
+      });
+      if (Object.keys(validObject).length == 0) next(new AppError("enter some valid thing", 400));
+      const { user } = req;
+      const result = await this.service.update(user._id, validObject);
+      if (!result) next(new AppError("somthing wrong", 400));
+      return res.status(204).json({ message: "updated successfully " }).end();
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
   async logout(req, res, next) {
     try {
       const result = await this.service.logout(req);
