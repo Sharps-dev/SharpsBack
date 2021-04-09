@@ -7,5 +7,6 @@ route.post("/signup", UserController.signUp);
 route.post("/login", UserController.login);
 route.post("/logout", protect, UserController.logout);
 route.post("/logoutall", protect, UserController.logoutAll);
+route.put("/", protect, UserController.update);
 
 module.exports = route;
