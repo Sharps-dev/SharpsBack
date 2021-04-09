@@ -1,16 +1,15 @@
-openapi: '3.0.3'
+openapi: "3.0.3"
 info:
   title: SharpsBack
-  version: '1.0'
+  version: "1.0"
   contact:
     email: email@email.com
 
-  
 paths:
   /test:
     get:
       responses:
-        '200':
+        "200":
           description: OK
 
   /user/signup:
@@ -23,13 +22,13 @@ paths:
           application/json:
             schema:
               allOf:
-                - $ref: '#/components/schemas/user'
+                - $ref: "#/components/schemas/user"
                 - type: object
                   properties:
                     password:
-                      type: string  
+                      type: string
       responses:
-        '201':
+        "201":
           description: OK
           content:
             application/json:
@@ -37,9 +36,31 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: "#/components/schemas/user"
                   token:
                     type: string
+  /user/:
+    put:
+      summary: update user
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/user"
+                - type: object
+                  properties:
+                    password:
+                      type: string
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
 
   /user/login:
     post:
@@ -53,13 +74,13 @@ paths:
               type: object
               properties:
                 email:
-                  $ref: '#/components/schemas/user/properties/email'
+                  $ref: "#/components/schemas/user/properties/email"
                 username:
-                  $ref: '#/components/schemas/user/properties/username'
+                  $ref: "#/components/schemas/user/properties/username"
                 password:
                   type: string
       responses:
-        '201':
+        "201":
           description: OK
           content:
             application/json:
@@ -67,7 +88,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: "#/components/schemas/user"
                   token:
                     type: string
 
@@ -79,7 +100,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: OK
 
   /user/logoutall:
@@ -90,9 +111,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: OK
-
 
 components:
   securitySchemes:

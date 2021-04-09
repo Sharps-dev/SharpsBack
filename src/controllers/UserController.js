@@ -60,11 +60,11 @@ class UserController extends Controller {
       validUpdate.forEach((v) => {
         if (body[v]) validObject[v] = body[v];
       });
-      if (Object.keys(validObject).length == 0) next(new AppError("enter some valid thing", 400));
+      if (Object.keys(validObject).length == 0) throw new AppError("enter some valid thing", 400);
       const { user } = req;
       const result = await this.service.update(user._id, validObject);
-      if (!result) next(new AppError("somthing wrong", 400));
-      return res.status(204).json({ message: "updated successfully " }).end();
+      if (!result) throw new AppError("somthing wrong", 400);
+      else return res.status(204).json({ message: "updated successfully " }).end();
     } catch (e) {
       console.error(e);
       next(e);
