@@ -4,10 +4,12 @@ const databaseConnect = require("./database");
 const swaggerUi = require("swagger-ui-express");
 const swaggerParser = require("swagger-parser");
 const path = require("path");
+const cors = require("cors");
 const { handleError } = require("../src/helpers/AppError");
 
 const initiateApp = async () => {
   const app = express();
+  app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 

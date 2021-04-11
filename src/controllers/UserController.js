@@ -12,6 +12,7 @@ class UserController extends Controller {
     super(service);
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
+    this.update = this.update.bind(this);
     this.logout = this.logout.bind(this);
     this.logoutAll = this.logoutAll.bind(this);
       this.verifyAccount = this.verifyAccount.bind(this);
@@ -54,6 +55,25 @@ class UserController extends Controller {
         } catch (err) { next(err); }
     }
 
+  async update(req, res, next) {
+    try {
+      const validUpdate = ["firstname", "lastname", "password", "avatar"];
+      const { body } = req;
+      if (Object.keys(body).length == 0) next(new AppError("enter some valid thing", 400));
+      const validObject = {};
+      validUpdate.forEach((v) => {
+        if (body[v]) validObject[v] = body[v];
+      });
+      if (Object.keys(validObject).length == 0) throw new AppError("enter some valid thing", 400);
+      const { user } = req;
+      const result = await this.service.update(user._id, validObject);
+      if (!result) throw new AppError("somthing wrong", 400);
+      else return res.status(204).json({ message: "updated successfully " }).end();
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
   async logout(req, res, next) {
     try {
       const result = await this.service.logout(req);
