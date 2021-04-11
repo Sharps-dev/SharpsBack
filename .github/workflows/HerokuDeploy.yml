@@ -21,3 +21,5 @@ jobs:
           HD_JWT_SECRET: ${{secrets.JWT_SECRET}}
           HD_PUBLIC_URL: ${{secrets.PUBLIC_URL}}
           HD_PUBLIC_DB: ${{secrets.PUBLIC_DB}}
+          MAILUSER: ${{secrets.MAILUSER}}
+          MAILPASS: ${{secrets.MAILPASS}}
