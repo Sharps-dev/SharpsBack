@@ -54,6 +54,15 @@ describe("User tests", () => {
     expect(result.token).to.not.equal(null);
   });
 
+  it("user update info 📈  ", async function () {
+    const findUser = await User.findById(initIdUser);
+    const res = await request
+      .put("/user/")
+      .set({ "Content-Type": "application/json", Authorization: `Bearer ${findUser.tokens[0]}` })
+      .send({ firstname: "John junior" });
+    expect(res.status).equal(204);
+  });
+
   it("user logout all devices 😠 ", async function () {
     const findUser = await User.findById(initIdUser);
     const res = await request.post("/user/logoutall").set({ "Content-Type": "application/json", Authorization: `Bearer ${findUser.tokens[0]}` });
