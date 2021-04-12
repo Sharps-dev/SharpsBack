@@ -11,9 +11,11 @@ const initiateApp = async () => {
   const app = express();
   app.use(cors());
   app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
   setRoutes(app);
   databaseConnect();
+  require("../src/helpers/Mailer");
   const swagger_path = path.resolve(__dirname, "./swagger.yaml");
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(await swaggerParser.bundle(swagger_path), { explorer: true }));
 

@@ -1,7 +1,10 @@
 const baseConfig = {
     NODE_ENV: process.env.NODE_ENV,
     port: process.env.PORT,
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    mailUser: process.env.MAILUSER,
+    mailPass: process.env.MAILPASS,
+    appName: 'Sharps'
 };
 const configs = {
     development: {

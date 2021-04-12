@@ -22,3 +22,5 @@ jobs:
           JWT_SECRET: ${{secrets.JWT_SECRET}}
           LOCAL_URL: ${{secrets.LOCAL_URL}}
           TEST_DB: ${{secrets.TEST_DB}}
+          MAILUSER: ${{secrets.MAILUSER}}
+          MAILPASS: ${{secrets.MAILPASS}}

@@ -7,6 +7,10 @@ route.post("/signup", UserController.signUp);
 route.post("/login", UserController.login);
 route.post("/logout", protect, UserController.logout);
 route.post("/logoutall", protect, UserController.logoutAll);
+route.get("/verify", UserController.verifyAccount);
+route.post("/resetpassword", UserController.requestResetPassword);
+route.get("/resetpassword", UserController.serveResetPasswordPage);//temporary
+route.post("/password", UserController.updatePassword);
 route.put("/", protect, UserController.update);
 
 module.exports = route;

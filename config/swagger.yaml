@@ -28,8 +28,8 @@ paths:
                     password:
                       type: string
       responses:
-        "201":
-          description: OK
+        '201':
+          description: A verification email is sent
           content:
             application/json:
               schema:
@@ -113,6 +113,24 @@ paths:
       responses:
         "200":
           description: OK
+
+  /user/resetpassword:
+    post:
+      summary: request for resetting user password
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/user/properties/email'
+      responses:
+        '200':
+          description: An email is sent if it's an existing verified email
+
 
 components:
   securitySchemes:
