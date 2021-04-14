@@ -1,5 +1,4 @@
 const Mongoose = require("mongoose");
-const validUrl = require("valid-url");
 const { AppError } = require("../helpers/AppError");
 const Schema = Mongoose.Schema;
 const schema = new Schema(
@@ -25,16 +24,7 @@ const schema = new Schema(
 );
 
 // methods
-schema.pre("save", async function (next) {
-  try {
-    const content = this;
-    if (content.isModified("longUrl") && !validUrl.isUri(content.longUrl)) next(new AppError("enter valid url", 400));
-    next();
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
+
 schema.methods.toJSON = function () {
   var obj = this.toObject();
   delete obj.createdAt;
