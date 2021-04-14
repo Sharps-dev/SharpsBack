@@ -6,19 +6,19 @@ const schema = new Schema(
   {
     longUrl: {
       type: String,
-      require: [true, "url is require field"],
+      required: [true, "url is require field"],
     },
     title: {
       type: String,
-      require: [true, "title is require field"],
+      required: [true, "title is require field"],
     },
     des: {
       type: String,
-      require: [true, "description is require field"],
+      required: [true, "description is require field"],
     },
     image: {
       type: String,
-      require: [true, "image is require field"],
+      required: [true, "image is require field"],
     },
   },
   { timestamps: true }
