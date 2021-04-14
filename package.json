@@ -30,6 +30,7 @@
     "nodemailer-express-handlebars": "^4.0.0",
     "swagger-parser": "^10.0.2",
     "swagger-ui-express": "^4.1.6",
+    "valid-url": "^1.0.9",
     "validator": "^13.5.2"
   },
   "devDependencies": {
