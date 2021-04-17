@@ -3,7 +3,11 @@ const { AppError } = require("../helpers/AppError");
 const Schema = Mongoose.Schema;
 const schema = new Schema(
   {
-    longUrl: {
+    domain: {
+      type: String,
+      required: [true, "url is require field"],
+    },
+    path: {
       type: String,
       required: [true, "url is require field"],
     },
@@ -31,6 +35,9 @@ schema.methods.toJSON = function () {
   delete obj.updatedAt;
   delete obj.__v;
   delete obj._id;
+  delete obj.path;
+  delete obj.domain;
+  obj.url = obj.domain + obj.path;
   return obj;
 };
 
