@@ -4,6 +4,7 @@ const User = require("./../models/User");
 const { AppError } = require("../helpers/AppError");
 const eventEmmiter = require("../helpers/eventEmitter");
 const checkToken = require("../utils/jwt/checkToken");
+const contentService = new (require("../services/ContentService"))(require("../models/Content"));
 
 const userService = new UserService(User);
 
@@ -16,10 +17,11 @@ class UserController extends Controller {
     this.update = this.update.bind(this);
     this.logout = this.logout.bind(this);
     this.logoutAll = this.logoutAll.bind(this);
-    this.verifyAccount = this.verifyAccount.bind(this);
-    this.requestResetPassword = this.requestResetPassword.bind(this);
-    this.serveResetPasswordPage = this.serveResetPasswordPage.bind(this);
-    this.updatePassword = this.updatePassword.bind(this);
+      this.verifyAccount = this.verifyAccount.bind(this);
+      this.requestResetPassword = this.requestResetPassword.bind(this);
+      this.serveResetPasswordPage = this.serveResetPasswordPage.bind(this);
+      this.updatePassword = this.updatePassword.bind(this);
+      this.getSuggestions = this.getSuggestions.bind(this);
   }
   /**
    *
@@ -204,11 +206,32 @@ class UserController extends Controller {
 
       user.password = password;
       await user.save();
-      return res.status(200).json("Password is reset successfully.").end();
-    } catch (err) {
-      next(err);
-    }
+      return res
+          .status(200)
+          .json("Password is reset successfully.")
+          .end();
+
+    } catch (err) { next(err); }
   }
+
+    async getSuggestions(req, res, next) {
+        try {
+            const { user } = req;
+            let { skip, limit } = req.query;
+
+            let results = await this.service.getSuggestions(user, { skip, limit });
+            const itemsLength = results.items.length;
+            limit -= itemsLength;
+            skip = itemsLength == 0 ? skip - results.total : 0;
+
+            const defaultResults = await contentService.getDefaultSuggestions({ skip, limit });
+            results.items = [...results.items, ...defaultResults.items];
+            results.total += defaultResults.total;
+
+            return res.status(200).json(results).end();
+
+        } catch (err) { next(err); }
+    }
 }
 
 module.exports = new UserController(userService);
