@@ -4,13 +4,14 @@ class Service {
   constructor(model) {
     this.model = model;
     this.getAll = this.getAll.bind(this);
+      this.getOne = this.getOne.bind(this);
     this.insert = this.insert.bind(this);
     this.insertAll = this.insertAll.bind(this);
     this.update = this.update.bind(this);
     this.delete = this.delete.bind(this);
   }
 
-  async getAll(query) {
+  async getAll(query, projection) {
     let { skip, limit } = query;
 
     skip = skip ? Number(skip) : 0;
@@ -20,7 +21,7 @@ class Service {
     delete query.limit;
 
     if (query._id) query._id = new mongoose.mongo.ObjectId(query._id);
-    let items = await this.model.find(query).skip(skip).limit(limit);
+    let items = await this.model.find(query, projection).skip(skip).limit(limit);
     let total = await this.model.count();
 
     return { items, total };
