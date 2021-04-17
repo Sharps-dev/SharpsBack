@@ -45,9 +45,19 @@ const schema = new Schema(
         isVerified: {
             type: Boolean,
             default: false
-        }
+        },
+        suggestions: [//array of unique ObjectIds
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'content'
+            }
+        ]
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    }
 );
 schema.plugin(uniqueValidator, { message: 'تکراری است {PATH}' });
 
@@ -102,8 +112,10 @@ schema.methods.toJSON = function () {
     delete obj.updatedAt;
     delete obj.__v;
     delete obj._id;
+    delete obj.id;
     delete obj.tokens;
     delete obj.isVerified;
+    delete obj.suggestions;
     return obj;
 };
 
