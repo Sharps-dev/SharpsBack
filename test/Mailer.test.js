@@ -1,9 +1,6 @@
 const mockery = require('mockery');
 const nodemailerMock = require('nodemailer-mock');
 const config = require('../config');
-mockery.enable({ warnOnUnregistered: false });
-mockery.registerMock('nodemailer', nodemailerMock);
-
 const app = require("../config/testApp");
 const request = require("supertest")(app);
 const expect = require("chai").expect;
