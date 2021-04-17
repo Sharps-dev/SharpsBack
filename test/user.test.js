@@ -54,6 +54,12 @@ describe("User tests", () => {
     expect(result.token).to.not.equal(null);
   });
 
+  it("get user info 😇 ", async function () {
+    const findUser = await User.findById(initIdUser);
+    const res = await request.get("/user/").set({ "Content-Type": "application/json", Authorization: `Bearer ${findUser.tokens[0]}` });
+    expect(res.status).equal(200);
+  });
+
   it("user update info 📈  ", async function () {
     const findUser = await User.findById(initIdUser);
     const res = await request
