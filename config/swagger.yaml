@@ -3,14 +3,76 @@ info:
   title: SharpsBack
   version: "1.0"
   contact:
-    email: email@email.com
+    email: sharpsbackend@gmail.com
 
 paths:
+  /content/suggestions:
+    put:
+      summary: set suggestions
+      tags:
+        - "Content"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                suggesters:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      userID:
+                        type: string
+                        format: ObjectId
+                      suggestions:
+                        type: array
+                        items:
+                          type: string
+                          format: ObjectId
+      responses:
+        '200':
+          description: OK
   /test:
     get:
       responses:
         "200":
           description: OK
+
+  /user/suggestions:
+    get:
+      summary: get user suggestions
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: skip
+          description: number of items to skip (=pages*limit)
+          schema:
+            type: number
+            default: 0
+        - in: query
+          name: limit
+          description: number of returned items
+          schema:
+            type: number
+            default: 10
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/content'
+                  total:
+                    type: number
 
   /user/signup:
     post:
@@ -156,3 +218,21 @@ components:
         email:
           type: string
           format: email
+
+    content:
+      type: object
+      required:
+        - domain
+        - path
+      properties:
+        url:
+          type: string
+          format: hostname
+        title:
+          type: string
+        des:
+          description: description
+          type: string
+        image:
+          type: string
+          format: uri
