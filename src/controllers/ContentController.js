@@ -16,7 +16,7 @@ class ContentController extends Controller {
       const contents = req.body;
       const validContent = [];
       contents.forEach((c) => {
-        if (validUrl.isUri(c.longUrl)) validContent.push(c);
+        if (validUrl.isUri(c.domain + c.path)) validContent.push(c);
       });
       if (validContent.length == 0) return res.status(400).json({ error: "enter valid url" }).end();
       const response = await this.service.insertAll(validContent);
