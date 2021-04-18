@@ -24,9 +24,14 @@ const schema = new Schema(
       required: [true, "image is require field"],
     },
   },
-  { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    }
 );
 
+schema.virtual('url').get(function () { return this.domain + this.path; });
 // methods
 
 schema.methods.toJSON = function () {
@@ -35,9 +40,9 @@ schema.methods.toJSON = function () {
   delete obj.updatedAt;
   delete obj.__v;
   delete obj._id;
+  delete obj.id;
   delete obj.path;
   delete obj.domain;
-  obj.url = obj.domain + obj.path;
   return obj;
 };
 

@@ -1,3 +1,7 @@
+const mockery = require('mockery');
+const nodemailerMock = require('nodemailer-mock');
+mockery.enable({ warnOnUnregistered: false });
+mockery.registerMock('nodemailer', nodemailerMock);
 const express = require("express");
 const setRoutes = require("./routes");
 const databaseConnect = require("./database");
