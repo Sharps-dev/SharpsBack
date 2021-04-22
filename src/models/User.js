@@ -114,7 +114,6 @@ schema.methods.toJSON = function () {
     delete obj._id;
     delete obj.id;
     delete obj.tokens;
-    delete obj.isVerified;
     delete obj.suggestions;
     return obj;
 };

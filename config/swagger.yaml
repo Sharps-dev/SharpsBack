@@ -110,12 +110,16 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/user"
-                - type: object
-                  properties:
-                    password:
-                      type: string
+              type: object
+              properties:
+                firstname:
+                  $ref: '#/components/schemas/user/properties/firstname'
+                lastname:
+                  $ref: '#/components/schemas/user/properties/lastname'
+                password:
+                  type: string
+                avatar:
+                  $ref: '#/components/schemas/user/properties/avatar'
       responses:
         "204":
           description: OK
@@ -239,6 +243,8 @@ components:
         email:
           type: string
           format: email
+        isVerified:
+          type: boolean
 
     content:
       type: object
