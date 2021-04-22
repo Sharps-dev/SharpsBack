@@ -25,7 +25,7 @@ describe("Mailer tests", async function() {
 		expect(sentMail.context.link).to.exist;
 		const { link } = sentMail.context;
 		const res = await request.get(link.replace(config.url,"/"));
-		expect(res.status).equal(200);
+		expect(res.status).equal(302);
 		const signedUpUser = await User.findOne({ username: user.username });
 		expect(signedUpUser.isVerified).to.be.true;
 	});
@@ -41,7 +41,7 @@ describe("Mailer tests", async function() {
 	it("resets the password of an account", async function () {
 		const res = await request.post("/user/password").send({
 			password: 'newPass',
-			retryPassword: 'newPass',
+			confirmPassword: 'newPass',
 			token: ((sentMail.context.link).split("="))[1]
 		});
 		expect(res.status).to.equal(200);

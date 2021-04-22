@@ -193,6 +193,27 @@ paths:
         '200':
           description: An email is sent if it's an existing verified email
 
+  /user/password:
+    put:
+      summary: resets user password
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+                token:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
 
 components:
   securitySchemes:
