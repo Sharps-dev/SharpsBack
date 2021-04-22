@@ -53,7 +53,7 @@ const mailConfigs = {
                       <br />This link will expire in 5 minutes',
                 buttonText: 'Reset Password'
             },
-            function (user) { return /*config.url + 'user/resetpassword?t='*/'http://localhost:3000/reset_password?t=' + user.generateToken({ saveToken: false, expiresIn: '5m' }); }
+            function (user) { return /*config.url + 'user/resetpassword?t='*/'http://localhost:3000/reset/reset_password?t=' + user.generateToken({ saveToken: false, expiresIn: '5m' }); }
         )
 };
 
