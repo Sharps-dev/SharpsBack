@@ -31,7 +31,7 @@ class UserController extends Controller {
   async login(req, res, next) {
     try {
       const { password, email, username } = req.body;
-      if (!password || (!email && !username)) throw new AppError("عبارات وارد شده صحیح نیستند", 400);
+      if (!password || (!email && !username)) throw new AppError("fill in the required fields", 400);
 
       const response = await this.service.login(req.body);
       return res.status(200).send(response).end();
@@ -43,7 +43,7 @@ class UserController extends Controller {
   async signUp(req, res, next) {
     try {
       const { password, username, email } = req.body;
-      if (!password || !email || !username) throw new AppError("لطفا موارد الزامی را وارد نمایید", 400);
+        if (!password || !email || !username) throw new AppError("fill in the required fields", 400);
       const newUser = await this.service.insert(req.body);
       eventEmmiter.emit("signUp", newUser);
       return res
