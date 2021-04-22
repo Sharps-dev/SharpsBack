@@ -39,7 +39,7 @@ describe("Mailer tests", async function() {
 	});
 
 	it("resets the password of an account", async function () {
-		const res = await request.post("/user/password").send({
+		const res = await request.put("/user/password").send({
 			password: 'newPass',
 			confirmPassword: 'newPass',
 			token: ((sentMail.context.link).split("="))[1]
