@@ -15,13 +15,14 @@ class UserController extends Controller {
     this.signUp = this.signUp.bind(this);
     this.getUser = this.getUser.bind(this);
     this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
     this.logout = this.logout.bind(this);
     this.logoutAll = this.logoutAll.bind(this);
-      this.verifyAccount = this.verifyAccount.bind(this);
-      this.requestResetPassword = this.requestResetPassword.bind(this);
-      this.serveResetPasswordPage = this.serveResetPasswordPage.bind(this);
-      this.updatePassword = this.updatePassword.bind(this);
-      this.getSuggestions = this.getSuggestions.bind(this);
+    this.verifyAccount = this.verifyAccount.bind(this);
+    this.requestResetPassword = this.requestResetPassword.bind(this);
+    this.serveResetPasswordPage = this.serveResetPasswordPage.bind(this);
+    this.updatePassword = this.updatePassword.bind(this);
+    this.getSuggestions = this.getSuggestions.bind(this);
   }
   /**
    *
@@ -82,6 +83,18 @@ class UserController extends Controller {
       const result = await this.service.update(user._id, validObject);
       if (!result) throw new AppError("somthing wrong", 400);
       else return res.status(204).json({ message: "updated successfully " }).end();
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
+
+  async delete(req, res, next) {
+    try {
+      const { user } = req;
+      const result = await this.service.delete(user._id);
+      if (!result) return res.status(400).json({ error: "check user input" }).end();
+      return res.status(204).end();
     } catch (e) {
       console.error(e);
       next(e);
@@ -206,32 +219,31 @@ class UserController extends Controller {
 
       user.password = password;
       await user.save();
-      return res
-          .status(200)
-          .json("Password is reset successfully.")
-          .end();
-
-    } catch (err) { next(err); }
+      return res.status(200).json("Password is reset successfully.").end();
+    } catch (err) {
+      next(err);
+    }
   }
 
-    async getSuggestions(req, res, next) {
-        try {
-            const { user } = req;
-            let { skip, limit } = req.query;
+  async getSuggestions(req, res, next) {
+    try {
+      const { user } = req;
+      let { skip, limit } = req.query;
 
-            let results = await this.service.getSuggestions(user, { skip, limit });
-            const itemsLength = results.items.length;
-            limit -= itemsLength;
-            skip = itemsLength == 0 ? skip - results.total : 0;
+      let results = await this.service.getSuggestions(user, { skip, limit });
+      const itemsLength = results.items.length;
+      limit -= itemsLength;
+      skip = itemsLength == 0 ? skip - results.total : 0;
 
-            const defaultResults = await contentService.getDefaultSuggestions({ skip, limit });
-            results.items = [...results.items, ...defaultResults.items];
-            results.total += defaultResults.total;
+      const defaultResults = await contentService.getDefaultSuggestions({ skip, limit });
+      results.items = [...results.items, ...defaultResults.items];
+      results.total += defaultResults.total;
 
-            return res.status(200).json(results).end();
-
-        } catch (err) { next(err); }
+      return res.status(200).json(results).end();
+    } catch (err) {
+      next(err);
     }
+  }
 }
 
 module.exports = new UserController(userService);
