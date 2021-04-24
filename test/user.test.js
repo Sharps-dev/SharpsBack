@@ -9,7 +9,6 @@ const expect = chai.expect;
 const initIdUser = new mongoose.Types.ObjectId();
 const initUser = { _id: initIdUser, firstname: "John", lastname: "Doe", email: "john@doe.com", username: "johnd", password: "123456" };
 const signUpUser = { firstname: "John2", lastname: "Doe", email: "john2@doe.com", username: "john2d", password: "123456" };
-
 // create new user ✔
 describe("User tests", () => {
   // remove all DB data 🔥
@@ -20,6 +19,7 @@ describe("User tests", () => {
 
   it("signUp user 🙂", async function () {
     const res = await request.post("/user/signup").send(signUpUser);
+    signUpUser.tokens = [res.body.token];
     expect(res.status).equal(201);
     expect(res.body.password).equal(undefined);
   });
@@ -73,5 +73,10 @@ describe("User tests", () => {
     const findUser = await User.findById(initIdUser);
     const res = await request.post("/user/logoutall").set({ "Content-Type": "application/json", Authorization: `Bearer ${findUser.tokens[0]}` });
     expect(res.status).equal(200);
+  });
+
+  it("user delete account 😢 ", async function () {
+    const res = await request.delete("/user/").set({ "Content-Type": "application/json", Authorization: `Bearer ${signUpUser.tokens[0]}` });
+    expect(res.status).equal(204);
   });
 });
