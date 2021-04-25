@@ -17,9 +17,9 @@ class UserService extends Service {
   async login(data) {
     const { username, password, email } = data;
     const user = await this.model.findOne({ $or: [{ email }, { username }] });
-      if (!user) throw new AppError("عبارات وارد شده صحیح نیستند", 400);
+      if (!user) throw new AppError("invalid credentials", 400);
     const checkUserPassword = await user.checkPassword(password);
-      if (!checkUserPassword) throw new AppError("عبارات وارد شده صحیح نیستند", 400);
+      if (!checkUserPassword) throw new AppError("invalid credentials", 400);
 
     const token = user.generateToken();
     return { user, token };

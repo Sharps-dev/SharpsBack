@@ -112,8 +112,29 @@ paths:
       responses:
         "200":
           description: OK
-
-    /user/:
+    put:
+      summary: update user
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  $ref: "#/components/schemas/user/properties/firstname"
+                lastname:
+                  $ref: "#/components/schemas/user/properties/lastname"
+                password:
+                  type: string
+                avatar:
+                  $ref: "#/components/schemas/user/properties/avatar"
+      responses:
+        "204":
+          description: OK
     delete:
       summary: delete user account
       tags:
@@ -197,6 +218,28 @@ paths:
         "200":
           description: An email is sent if it's an existing verified email
 
+  /user/password:
+    put:
+      summary: resets user password
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+                token:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
+
 components:
   securitySchemes:
     bearerAuth:
@@ -221,6 +264,8 @@ components:
         email:
           type: string
           format: email
+        isVerified:
+          type: boolean
 
     content:
       type: object

@@ -19,7 +19,7 @@ const schema = new Schema(
             type: String,
             required: true,
             unique: true,
-            validate: [e => validator.isEmail(e), 'ایمیل نامعتبر است']
+            validate: [e => validator.isEmail(e), 'invalid {PATH}']
         },
         username: {
             type: String,
@@ -59,7 +59,7 @@ const schema = new Schema(
         toObject: { virtuals: true }
     }
 );
-schema.plugin(uniqueValidator, { message: 'تکراری است {PATH}' });
+schema.plugin(uniqueValidator, { message: '{PATH} is taken' });
 
 // methods
 schema.pre("save", async function (next) {
@@ -114,7 +114,6 @@ schema.methods.toJSON = function () {
     delete obj._id;
     delete obj.id;
     delete obj.tokens;
-    delete obj.isVerified;
     delete obj.suggestions;
     return obj;
 };
