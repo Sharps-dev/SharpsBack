@@ -1,0 +1,25 @@
+name: Heroku Deploy
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [dev]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "sharpsback"
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+        env:
+          HD_PORT: ${{secrets.PORT}}
+          HD_JWT_SECRET: ${{secrets.JWT_SECRET}}
+          HD_PUBLIC_URL: ${{secrets.PUBLIC_URL}}
+          HD_PUBLIC_DB: ${{secrets.PUBLIC_DB}}
+          HD_MAILUSER: ${{secrets.MAILUSER}}
+          HD_MAILPASS: ${{secrets.MAILPASS}}
