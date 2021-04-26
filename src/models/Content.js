@@ -39,7 +39,7 @@ schema.methods.toJSON = function () {
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.__v;
-  delete obj._id;
+  //delete obj._id;
   delete obj.id;
   delete obj.path;
   delete obj.domain;

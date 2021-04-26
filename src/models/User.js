@@ -51,6 +51,12 @@ const schema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: 'content'
             }
+        ],
+        savedContents: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'content'
+            }
         ]
     },
     {
@@ -115,6 +121,7 @@ schema.methods.toJSON = function () {
     delete obj.id;
     delete obj.tokens;
     delete obj.suggestions;
+    delete obj.savedContents;
     return obj;
 };
 

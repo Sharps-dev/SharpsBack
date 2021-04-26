@@ -88,6 +88,34 @@ class UserService extends Service {
             total
         };
     }
+
+    async addSavedContent(user, contentId) {
+        user.savedContents.push(contentId);
+        await user.save();
+    }
+    async removeSavedContent(user, contentId) {
+        const contentIndex = user.savedContents.indexOf(contentId);
+        if (contentIndex == -1) return false;
+        user.savedContents.splice(contentIndex, 1);
+        await user.save();
+        return true;
+    }
+    async getSavedContents(user, { skip = 0, limit = 10 }) {
+
+        const total = user.savedContents.length;
+        await user.populate({
+            path: 'savedContents',
+            options: {
+                limit,
+                skip,
+            }
+        }).execPopulate();
+
+        return {
+            items: user.savedContents,
+            total
+        };
+    }
 }
 
 module.exports = UserService;
