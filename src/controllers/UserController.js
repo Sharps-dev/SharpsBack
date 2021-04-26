@@ -5,6 +5,7 @@ const { AppError } = require("../helpers/AppError");
 const eventEmmiter = require("../helpers/eventEmitter");
 const checkToken = require("../utils/jwt/checkToken");
 const contentService = new (require("../services/ContentService"))(require("../models/Content"));
+const mongoose = require("mongoose");
 
 const userService = new UserService(User);
 
@@ -22,6 +23,9 @@ class UserController extends Controller {
       this.requestResetPassword = this.requestResetPassword.bind(this);
       this.updatePassword = this.updatePassword.bind(this);
       this.getSuggestions = this.getSuggestions.bind(this);
+      this.addSavedContent = this.addSavedContent.bind(this);
+      this.removeSavedContent = this.removeSavedContent.bind(this);
+      this.getSavedContents = this.getSavedContents.bind(this);
   }
   /**
    *
@@ -183,7 +187,37 @@ class UserController extends Controller {
     } catch (err) {
       next(err);
     }
-  }
+    }
+
+    async addSavedContent(req, res, next) {
+        try {
+            const { contentId } = req.body;
+            if (!contentId || !mongoose.Types.ObjectId.isValid(contentId))
+                throw new AppError("Invalid field: contentId", 400);
+
+            await this.service.addSavedContent(req.user, contentId);
+            return res.sendStatus(200).end();
+
+        } catch (err) { next(err); }
+    }
+    async removeSavedContent(req, res, next) {
+        try {
+            const success = await this.service.removeSavedContent(req.user, req.params.contentId);
+            if (!success) throw new AppError("ContentId not found", 400);
+            return res.sendStatus(200).end();
+
+        } catch (err) { next(err); }
+    }
+    async getSavedContents(req, res, next) {
+        try {
+            let { skip, limit } = req.query;
+            skip = Number(skip);
+            limit = Number(limit);
+            const result = await this.service.getSavedContents(req.user, { skip, limit });
+            return res.status(200).json(result).end();
+
+        } catch (err) { console.log(err);next(err); }
+    }
 }
 
 module.exports = new UserController(userService);
