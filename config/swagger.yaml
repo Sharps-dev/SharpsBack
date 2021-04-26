@@ -6,6 +6,75 @@ info:
     email: sharpsbackend@gmail.com
 
 paths:
+  /user/savedContents:
+    post:
+      summary: saves a content for user
+      tags:
+        - "Content"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contentId:
+                  $ref: '#/components/schemas/content/properties/_id'
+      responses:
+        "200":
+          description: OK
+    get:
+      summary: gets paginated user saved contents
+      tags:
+        - "Content"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: skip
+          description: number of items to skip (=pages*limit)
+          schema:
+            type: number
+            default: 0
+        - in: query
+          name: limit
+          description: number of returned items
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/content"
+                  total:
+                    type: number
+
+  /user/savedContents/{contentId}:
+    delete:
+      summary: removes a saved content
+      tags:
+        - "Content"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: contentId
+          required: true
+          schema:
+            $ref: '#/components/schemas/content/properties/_id'
+      responses:
+        "200":
+          description: OK
+
   /content/suggestions:
     put:
       summary: set suggestions
@@ -33,6 +102,7 @@ paths:
       responses:
         "200":
           description: OK
+  
   /test:
     get:
       responses:
@@ -43,7 +113,7 @@ paths:
     get:
       summary: get user suggestions
       tags:
-        - "User"
+        - "Content"
       security:
         - bearerAuth: []
       parameters:
@@ -273,6 +343,8 @@ components:
         - domain
         - path
       properties:
+        _id:
+          type: string
         url:
           type: string
           format: hostname
