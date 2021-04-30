@@ -116,6 +116,22 @@ class UserService extends Service {
             total
         };
     }
+
+    async getHistory(user) {
+
+        const HISTORY_COUNT = 50;
+
+        await user.populate({
+            path: 'history',
+            options: {
+                limit: HISTORY_COUNT,
+                sort: { 'createdAt': -1 }
+            },
+            populate: { path: 'content'}//front chi mikhad? url? kolle content?
+        }).execPopulate();
+
+        return user.history;
+    }
 }
 
 module.exports = UserService;
