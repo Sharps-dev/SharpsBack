@@ -13,6 +13,6 @@ route.put("/password", UserController.updatePassword);
 route.put("/", protect, UserController.update).get("/", protect, UserController.getUser).delete("/", protect, UserController.delete);
 route.get("/suggestions", protect, UserController.getSuggestions);
 route.route("/savedContents").post(protect, UserController.addSavedContent).get(protect, UserController.getSavedContents);
-route.delete("/savedContents/:contentId", protect, UserController.removeSavedContent);
+route.delete("/savedContents", protect, UserController.removeSavedContent);
 
 module.exports = route;

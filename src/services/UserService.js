@@ -127,7 +127,7 @@ class UserService extends Service {
                 limit: HISTORY_COUNT,
                 sort: { 'createdAt': -1 }
             },
-            populate: { path: 'content'}//front chi mikhad? url? kolle content?
+            populate: { path: 'content'}
         }).execPopulate();
 
         return user.history;

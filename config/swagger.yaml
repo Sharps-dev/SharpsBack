@@ -59,8 +59,8 @@ paths:
             schema:
               type: object
               properties:
-                contentId:
-                  $ref: '#/components/schemas/content/properties/_id'
+                url:
+                  $ref: '#/components/schemas/content/properties/url'
       responses:
         "200":
           description: OK
@@ -97,8 +97,6 @@ paths:
                       $ref: "#/components/schemas/content"
                   total:
                     type: number
-
-  /user/savedContents/{contentId}:
     delete:
       summary: removes a saved content
       tags:
@@ -106,11 +104,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: path
-          name: contentId
+        - in: query
+          name: url
           required: true
           schema:
-            $ref: '#/components/schemas/content/properties/_id'
+            $ref: '#/components/schemas/content/properties/url'
       responses:
         "200":
           description: OK
@@ -379,12 +377,7 @@ components:
 
     content:
       type: object
-      required:
-        - domain
-        - path
       properties:
-        _id:
-          type: string
         url:
           type: string
           format: hostname

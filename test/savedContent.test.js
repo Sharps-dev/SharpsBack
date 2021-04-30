@@ -7,21 +7,26 @@ const contentModel = require('../src/models/Content');
 const newToken = require("../src/utils/jwt/newToken");
 
 const contents = [
-    { image: "a", domain: "https://a.com", path: "/a", des: "a", title: "a" },
-    { image: "b", domain: "https://b.com", path: "/b", des: "b", title: "b" },
-    { image: "c", domain: "https://c.com", path: "/c", des: "c", title: "c" },
-    { image: "d", domain: "https://d.com", path: "/d", des: "d", title: "d" }
+    { image: "a", domain: "a.com", path: "/a", des: "a", title: "a" },
+    { image: "b", domain: "b.com", path: "/b", des: "b", title: "b" },
+    { image: "c", domain: "c.com", path: "/c", des: "c", title: "c" },
+    { image: "d", domain: "d.com", path: "/d", des: "d", title: "d" }
 ];
 const userInfo = { firstname: "John2", lastname: "Doe", email: "john2@doe.com", username: "john2d", password: "123456" };
 
 describe('saved content tests', () => {
-    let contentIds;
+    let urls = [];
+    let contentIds = [];
     let userId;
     let token;
 
     before(async () => {
         await contentModel.deleteMany();
-        contentIds = (await contentModel.insertMany(contents)).map(c => c._id);
+        const dbContents = await contentModel.insertMany(contents);
+        for (const content of dbContents) {
+            urls.push(content.url);
+            contentIds.push(content._id);
+        }
 
         await userModel.deleteMany();
         const user = await userModel.create(userInfo);
@@ -32,19 +37,20 @@ describe('saved content tests', () => {
     });
 
     it('saves content for user', async function () {
-        const savedId = [contentIds[0], contentIds[1]];
-        let res = await request.post('/user/savedContents').set({ Authorization: 'Bearer ' + token }).send({ contentId: savedId[0] });
+        const savedUrls = [urls[0], urls[1]];
+        const savedIds = [contentIds[0], contentIds[1]];
+        let res = await request.post('/user/savedContents').set({ Authorization: 'Bearer ' + token }).send({ url: savedUrls[0] });
         expect(res.status).to.equal(200);
-        res = await request.post('/user/savedContents').set({ Authorization: 'Bearer ' + token }).send({ contentId: savedId[1] });
+        res = await request.post('/user/savedContents').set({ Authorization: 'Bearer ' + token }).send({ url: savedUrls[1] });
         expect(res.status).to.equal(200);
         
         const user = await userModel.findById(userId);
-        expect(user.savedContents).to.eql(savedId);
+        expect(user.savedContents).to.eql(savedIds);
     });
 
     it("removes a saved content", async () => {
         const savedId = [contentIds[0]];
-        const res = await request.delete('/user/savedContents/' + contentIds[1]).set({ Authorization: 'Bearer ' + token });
+        const res = await request.delete('/user/savedContents').set({ Authorization: 'Bearer ' + token }).query({ url: urls[1]});
         expect(res.status).to.equal(200);
 
         const user = await userModel.findById(userId);
@@ -52,10 +58,10 @@ describe('saved content tests', () => {
     });
 
     it("gets user's saved contents", async () => {
-        const savedId = [contentIds[0]];
+        const savedUrl = [urls[0]];
         const res = await request.get('/user/savedContents').set({ Authorization: 'Bearer ' + token });
         expect(res.status).to.equal(200);
         expect(res.body.total).to.equal(1);
-        expect(res.body.items[0]._id).to.equal(savedId[0].toString());
+        expect(res.body.items[0].url).to.equal(savedUrl[0]);
     });
 });
