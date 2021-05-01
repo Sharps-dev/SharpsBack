@@ -23,6 +23,23 @@ class Contentservce extends Service {
         limit = limit ? Number(limit) : 10;
         return await this.getAll({ skip, limit });
     }
+
+    convertUrlQuery(query) {
+        if (!query.url.startsWith('https://')) query.url = 'https://' + query.url;
+        const url = new URL(query.url);
+        query.domain = url.hostname;
+        query.path = url.pathname;
+        delete query.url;
+    }
+
+    async getAll(query) {
+        if (query.url) this.convertUrlQuery(query);
+        return super.getAll(query);
+    }
+    async getOne(query) {
+        if (query.url) this.convertUrlQuery(query);
+        return super.getOne(query);
+    }
 }
 
 module.exports = Contentservce;

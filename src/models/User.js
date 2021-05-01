@@ -66,6 +66,11 @@ const schema = new Schema(
     }
 );
 schema.plugin(uniqueValidator, { message: '{PATH} is taken' });
+schema.virtual('history', {
+    ref: 'userHistory',
+    localField: '_id',
+    foreignField: 'user'
+});
 
 // methods
 schema.pre("save", async function (next) {

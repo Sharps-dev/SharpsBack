@@ -191,19 +191,27 @@ class UserController extends Controller {
 
     async addSavedContent(req, res, next) {
         try {
-            const { contentId } = req.body;
-            if (!contentId || !mongoose.Types.ObjectId.isValid(contentId))
-                throw new AppError("Invalid field: contentId", 400);
+            const { url } = req.body;
+            if (!url) throw new AppError('invalid url', 400);
 
-            await this.service.addSavedContent(req.user, contentId);
+            const content = await contentService.getOne({ url });
+            if (!content) throw new AppError('invalid url', 400);
+
+            await this.service.addSavedContent(req.user, content._id);
             return res.sendStatus(200).end();
 
         } catch (err) { next(err); }
     }
     async removeSavedContent(req, res, next) {
         try {
-            const success = await this.service.removeSavedContent(req.user, req.params.contentId);
-            if (!success) throw new AppError("ContentId not found", 400);
+            const { url } = req.query;
+            if (!url) throw new AppError('invalid url', 400);
+
+            const content = await contentService.getOne({ url });
+            if (!content) throw new AppError('invalid url', 400);
+
+            const success = await this.service.removeSavedContent(req.user, content._id);
+            if (!success) throw new AppError("savedContent not found", 400);
             return res.sendStatus(200).end();
 
         } catch (err) { next(err); }
