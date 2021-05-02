@@ -6,6 +6,63 @@ info:
     email: sharpsbackend@gmail.com
 
 paths:
+  /user/blockedDomains:
+    post:
+      summary: adds a single domain to the user blocked list
+      tags:
+        - "Blocked Domains"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domain:
+                  $ref: '#/components/schemas/content/properties/url'
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: sets user blocked domains to the sent array 
+      tags:
+        - "Blocked Domains"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domains:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/content/properties/url'
+      responses:
+        '200':
+          description: OK
+    get:
+      summary: gets user blocked domains list
+      tags:
+        - "Blocked Domains"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blockedDomains:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/content/properties/url'
+
+
   /userHistory:
     post:
       summary: creates a userHistory
