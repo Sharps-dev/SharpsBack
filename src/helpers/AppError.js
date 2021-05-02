@@ -5,6 +5,7 @@ class AppError extends Error {
         this.message = message || "An unexpected error occurred";
     }
 }
+class MissingBodyFieldError extends AppError { constructor() { super("Missing field in body", 400); } }
 
 const handleError = (err, res) => {
 
@@ -19,4 +20,4 @@ const handleError = (err, res) => {
         .json({ error: err.message })
         .end();
 };
-module.exports = { AppError, handleError };
+module.exports = { AppError, handleError, MissingBodyFieldError };
