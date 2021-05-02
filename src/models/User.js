@@ -57,6 +57,11 @@ const schema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: 'content'
             }
+        ],
+        blockedDomains: [
+            {
+                type: String
+            }
         ]
     },
     {

@@ -30,7 +30,7 @@ const schema = new Schema(
         toObject: { virtuals: true }
     }
 );
-
+schema.index({ "createdAt": -1 });
 schema.virtual('url').get(function () { return this.domain + this.path; });
 // methods
 
