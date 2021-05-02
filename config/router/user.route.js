@@ -14,5 +14,9 @@ route.put("/", protect, UserController.update).get("/", protect, UserController.
 route.get("/suggestions", protect, UserController.getSuggestions);
 route.route("/savedContents").post(protect, UserController.addSavedContent).get(protect, UserController.getSavedContents);
 route.delete("/savedContents", protect, UserController.removeSavedContent);
+route.route("/blockedDomains")
+    .post(protect, UserController.addBlockedDomain)
+    .put(protect, UserController.setBlockedDomains)
+    .get(protect, UserController.getBlockedDomains);
 
 module.exports = route;

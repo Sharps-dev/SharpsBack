@@ -1,7 +1,7 @@
 ﻿const Controller = require("./Controller");
 const UserService = require("./../services/UserService");
 const User = require("./../models/User");
-const { AppError } = require("../helpers/AppError");
+const { AppError, MissingBodyFieldError } = require("../helpers/AppError");
 const eventEmmiter = require("../helpers/eventEmitter");
 const checkToken = require("../utils/jwt/checkToken");
 const contentService = new (require("../services/ContentService"))(require("../models/Content"));
@@ -26,6 +26,9 @@ class UserController extends Controller {
       this.addSavedContent = this.addSavedContent.bind(this);
       this.removeSavedContent = this.removeSavedContent.bind(this);
       this.getSavedContents = this.getSavedContents.bind(this);
+      this.addBlockedDomain = this.addBlockedDomain.bind(this);
+      this.setBlockedDomains = this.setBlockedDomains.bind(this);
+      this.getBlockedDomains = this.getBlockedDomains.bind(this);
   }
   /**
    *
@@ -178,8 +181,9 @@ class UserController extends Controller {
       const itemsLength = results.items.length;
       limit -= itemsLength;
       skip = itemsLength == 0 ? skip - results.total : 0;
+      if (skip < 0) skip = 0;
 
-      const defaultResults = await contentService.getDefaultSuggestions({ skip, limit });
+      const defaultResults = await this.service.getDefaultSuggestions(user, { skip, limit });
       results.items = [...results.items, ...defaultResults.items];
       results.total += defaultResults.total;
 
@@ -225,6 +229,34 @@ class UserController extends Controller {
             return res.status(200).json(result).end();
 
         } catch (err) { console.log(err);next(err); }
+    }
+
+    async addBlockedDomain(req, res, next) {
+        try {
+            const { domain } = req.body;
+            if (!domain) throw new MissingBodyFieldError();
+
+            await this.service.addBlockedDomain(req.user, domain);
+            return res.sendStatus(200).end();
+
+        } catch (err) { next(err); }
+    }
+    async setBlockedDomains(req, res, next) {
+        try {
+            const { domains } = req.body;
+            if (!domains) throw new MissingBodyFieldError();
+
+            await this.service.setBlockedDomains(req.user, domains);
+            return res.sendStatus(200).end();
+
+        } catch (err) { next(err); }
+    }
+    async getBlockedDomains(req, res, next) {
+        try {
+            const blockedDomains = this.service.getBlockedDomains(req.user);
+            return res.status(200).json({ blockedDomains }).end();
+
+        } catch (err) { next(err); }
     }
 }
 
