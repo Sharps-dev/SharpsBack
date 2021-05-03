@@ -1,6 +1,7 @@
 ﻿const mongoose = require("mongoose");
 const { AppError } = require("../helpers/AppError");
 const Service = require("./Service");
+const contentService = new (require("./ContentService"))(require("../models/Content"));
 /**
  * UserService class
  * @param {MongooseModel} model
@@ -56,30 +57,17 @@ class UserService extends Service {
         user.suggestions = [...new Set(contentIds)];
         await user.save();
     }
-    /**
-     * 
-     * @param {mongoose.Document} user
-     * @param {Object} options
-     * @param {Number} options.skip
-     * @param {Number} options.limit
-     */
-    async getSuggestions(user, options) {
-        let skip, limit;
-        if (options) {
-            skip= options.skip;
-            limit = options.limit;
-        }
-
-        skip = skip ? Number(skip) : 0;
-        limit = limit ? Number(limit) : 10;
+    
+    async getSuggestions(user, { skip = 0, limit = 10 }) {
         const total = user.suggestions.length;
 
         await user.populate({
             path: 'suggestions',
+            domain: { $nin: user.blockedDomains },
             options: {
                 limit,
                 skip,
-                //sort??
+                sort: { 'createdAt': -1 }
             }
         }).execPopulate();
 
@@ -87,6 +75,14 @@ class UserService extends Service {
             items: user.suggestions,
             total
         };
+    }
+    async getDefaultSuggestions(user, { skip = 0, limit = 10 }) {
+        const query = {
+            skip: Number(skip),
+            limit: Number(limit),
+            domain: { $nin: user.blockedDomains }
+        };
+        return await contentService.getAll(query);
     }
 
     async addSavedContent(user, contentId) {
@@ -132,6 +128,16 @@ class UserService extends Service {
 
         return user.history;
     }
+
+    async setBlockedDomains(user, domains) {
+        user.blockedDomains = domains;
+        await user.save();
+    }
+    async addBlockedDomain(user, domain) {
+        user.blockedDomains.push(domain);//check duplicates?
+        await user.save();
+    }
+    getBlockedDomains(user) { return user.blockedDomains; }
 }
 
 module.exports = UserService;

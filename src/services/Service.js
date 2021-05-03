@@ -22,7 +22,7 @@ class Service {
 
     if (query._id) query._id = new mongoose.mongo.ObjectId(query._id);
     let items = await this.model.find(query, projection).skip(skip).limit(limit);
-      let total = await this.model.countDocuments();
+    let total = await this.model.countDocuments(query);
 
     return { items, total };
   }
