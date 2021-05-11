@@ -40,8 +40,8 @@ describe('suggestion tests', () => {
         const token = newToken(user);
         user.tokens.push(token);
         await user.save();
-        const res = await request.get('/user/suggestions').set({ Authorization: 'Bearer ' + token });
+        const res = await request.get('/user/suggestions').set({ Authorization: 'Bearer ' + token }).query({ showAds: false });
         expect(res.status).to.equal(200);
-        expect(res.body.total).to.equal(6);
+        expect(res.body.total).to.equal(4);
     })
 });

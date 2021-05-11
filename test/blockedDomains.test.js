@@ -62,7 +62,7 @@ describe('blocked domains tests ⛔', () => {
 
     it("filters contents based on domains", async () => {
         const validUrls = [domains[2]+ contents[2].path, domains[3]+contents[3].path];
-        const res = await request.get('/user/suggestions').set({ Authorization: 'Bearer ' + token });
+        const res = await request.get('/user/suggestions').set({ Authorization: 'Bearer ' + token }).query({ showAds: false });
         expect(res.status).to.equal(200);
         expect(res.body.total).to.equal(2);
         const resUrls = res.body.items.map(c => c.url);
