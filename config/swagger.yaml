@@ -224,6 +224,12 @@ paths:
           schema:
             type: number
             default: 10
+        - in: query
+          name: showAds
+          description: show ads or not
+          schema:
+            type: boolean
+            default: true
       responses:
         "200":
           description: OK
@@ -448,6 +454,10 @@ components:
           format: uri
         tag:
           type: string
+        likes:
+          type: integer
+        clicks:
+          type: integer
 
     userHistory:
       type: object
