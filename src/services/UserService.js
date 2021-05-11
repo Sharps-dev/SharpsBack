@@ -10,6 +10,7 @@ class UserService extends Service {
   constructor(model) {
     super(model);
     this.login = this.login.bind(this);
+      this.getExplore = this.getExplore.bind(this);
   }
   /**
    * login function user
@@ -77,12 +78,41 @@ class UserService extends Service {
         };
     }
     async getDefaultSuggestions(user, { skip = 0, limit = 10 }) {
+        
         const query = {
             skip: Number(skip),
             limit: Number(limit),
             domain: { $nin: user.blockedDomains }
         };
+
+        if (user.suggestions.length > 0) {
+            await user.depopulate('suggestions');
+            query._id = { $nin: user.suggestions };
+        }
+
         return await contentService.getAll(query);
+    }
+    async getExplore(user, { skip = 0, limit = 10, showAds = 'true' }) {
+        skip = Number(skip);
+        limit = Number(limit);
+        const SUGGESTED_RATE = 0.7;
+
+        const suggestionLimit = Math.floor(SUGGESTED_RATE * limit);
+        const suggestionSkip = Math.floor(SUGGESTED_RATE * skip);
+
+        let ads = showAds == 'true' ? await contentService.getAds() : { items: [], total: 0 };
+
+        let results = await this.getSuggestions(user, { skip: suggestionSkip, limit: suggestionLimit });
+        let otherSkip = results.items.length == 0 ? skip - results.total : 0;
+        otherSkip -= ads.items.length;
+        if (otherSkip < 0) otherSkip = 0;
+        const otherLimit = limit - results.items.length - ads.items.length;
+        const defaultResults = await this.getDefaultSuggestions(user, { skip: otherSkip, limit: otherLimit }, results.items);
+
+        results.items = [...ads.items, ...results.items, ...defaultResults.items];
+        results.total += defaultResults.total + ads.total;
+
+        return results;
     }
 
     async addSavedContent(user, contentId) {

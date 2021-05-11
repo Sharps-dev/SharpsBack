@@ -172,25 +172,15 @@ class UserController extends Controller {
     }
   }
 
-  async getSuggestions(req, res, next) {
-    try {
-      const { user } = req;
-      let { skip, limit } = req.query;
+    async getSuggestions(req, res, next) {
+        try {
 
-      let results = await this.service.getSuggestions(user, { skip, limit });
-      const itemsLength = results.items.length;
-      limit -= itemsLength;
-      skip = itemsLength == 0 ? skip - results.total : 0;
-      if (skip < 0) skip = 0;
+            const { user } = req;
+            let { skip, limit, showAds } = req.query;
 
-      const defaultResults = await this.service.getDefaultSuggestions(user, { skip, limit });
-      results.items = [...results.items, ...defaultResults.items];
-      results.total += defaultResults.total;
-
-      return res.status(200).json(results).end();
-    } catch (err) {
-      next(err);
-    }
+            const results = await this.service.getExplore(user, { skip, limit, showAds });
+            return res.status(200).json(results).end();
+        } catch (err) { console.log(err); next(err); }
     }
 
     async addSavedContent(req, res, next) {

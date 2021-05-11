@@ -32,7 +32,27 @@ const schema = new Schema(
 );
 schema.index({ "createdAt": -1 });
 schema.virtual('url').get(function () { return this.domain + this.path; });
+
+schema.virtual('likes', {
+    ref: 'userHistory',
+    localField: '_id',
+    foreignField: 'content',
+    match: { eventType: 'LIKE' },
+    count: true
+});
+schema.virtual('clicks', {
+    ref: 'userHistory',
+    localField: '_id',
+    foreignField: 'content',
+    match: { eventType: 'CLICK' },
+    count: true
+});
 // methods
+
+schema.pre('find', function(next) {
+    this.populate('likes').populate('clicks');
+    next();
+});
 
 schema.methods.toJSON = function () {
   var obj = this.toObject();
