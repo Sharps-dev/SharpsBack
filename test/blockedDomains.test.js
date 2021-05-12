@@ -66,6 +66,6 @@ describe('blocked domains tests ⛔', () => {
         expect(res.status).to.equal(200);
         expect(res.body.total).to.equal(2);
         const resUrls = res.body.items.map(c => c.url);
-        expect(resUrls).to.eql(validUrls);
+        expect(resUrls).to.have.members(validUrls);
     });
 });

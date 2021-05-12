@@ -82,7 +82,8 @@ class UserService extends Service {
         const query = {
             skip: Number(skip),
             limit: Number(limit),
-            domain: { $nin: user.blockedDomains }
+            domain: { $nin: user.blockedDomains },
+            sort: { 'createdAt': -1 }
         };
 
         if (user.suggestions.length > 0) {
