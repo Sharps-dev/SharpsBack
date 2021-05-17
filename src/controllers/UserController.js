@@ -248,6 +248,15 @@ class UserController extends Controller {
 
         } catch (err) { next(err); }
     }
+
+    async resendVerificationMail(req, res, next) {
+        try {
+            const { user } = req;
+            if (user.isVerified) throw new AppError('User is already verified!', 400);
+            eventEmmiter.emit('signUp', req.user);
+            return res.sendStatus(201).end();
+        } catch (err) { next(err); }
+    }
 }
 
 module.exports = new UserController(userService);

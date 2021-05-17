@@ -9,15 +9,28 @@ const User = require("../src/models/User");
 const user = {firstname: "John", lastname: "Doe", email: "John@Doe.com", username: "johndoe", password: "123456" };
 
 describe("Mailer tests", async function() {
-
+	let token;
 	before(async () => await User.deleteMany());
 
 	it("sends verification email upon user signup", async function () {
 		const res = await request.post("/user/signup").send(user);
+		token = res.body.token;
 		expect(res.status).equal(201);
 		const sentMails = nodemailerMock.mock.getSentMail();
 		expect(sentMails.length).to.equal(1);
 		sentMail = sentMails[0];
+		expect(sentMail.to).to.equal(user.email);
+	});
+
+	it("resends verification email", async function () {
+		const dbuser = await User.findOne({ username: user.username });
+		dbuser.tokens.push(token);
+		await dbuser.save();
+		const res = await request.post("/user/verificationMail").set({ Authorization: 'Bearer ' + token });
+		expect(res.status).equal(201);
+		const sentMails = nodemailerMock.mock.getSentMail();
+		expect(sentMails.length).to.equal(1);
+		expect(sentMails[0]).to.eql(sentMail);
 		expect(sentMail.to).to.equal(user.email);
 	});
 

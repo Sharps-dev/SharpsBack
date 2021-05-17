@@ -6,6 +6,7 @@ info:
     email: sharpsbackend@gmail.com
 
 paths:
+  
   /user/blockedDomains:
     post:
       summary: adds a single domain to the user blocked list
@@ -244,6 +245,17 @@ paths:
                       $ref: "#/components/schemas/content"
                   total:
                     type: number
+
+  /user/verificationMail:
+    post:
+      summary: resends verification email
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: OK
 
   /user/signup:
     post:
