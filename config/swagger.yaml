@@ -476,6 +476,7 @@ components:
           enum:
             - "CLICK"
             - "LIKE"
+            - "UNLIKE"
             - "ENTER"
             - "EXIT"
         createdAt:
