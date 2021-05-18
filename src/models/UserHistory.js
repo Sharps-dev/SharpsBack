@@ -43,7 +43,7 @@ schema.pre("save", async function (next) {
 schema.methods.toJSON = function () {
     var obj = this.toObject();
     if (typeof this.content == "object") {
-        const contentFields = ['domain', 'tag', 'url'];
+        const contentFields = ['domain', 'tags', 'url'];
         contentFields.forEach(field => obj[field] = this.content[field]);
     }
     delete obj.content;

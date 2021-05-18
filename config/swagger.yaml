@@ -464,8 +464,10 @@ components:
         image:
           type: string
           format: uri
-        tag:
-          type: string
+        tags:
+          type: array
+          items:
+            type: string
         likes:
           type: integer
         clicks:
@@ -481,8 +483,10 @@ components:
       properties:
         domain:
           $ref: '#/components/schemas/content/properties/url'
-        tag:
-          $ref: '#/components/schemas/content/properties/tag'
+        tags:
+          $ref: '#/components/schemas/content/properties/tags'
+        url:
+          $ref: '#/components/schemas/content/properties/url'
         eventType:
           type: string
           enum:

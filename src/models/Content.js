@@ -23,6 +23,9 @@ const schema = new Schema(
       type: String,
       required: [true, "image is require field"],
     },
+    tags: [{
+        type: String
+    }]
   },
     {
         timestamps: true,
