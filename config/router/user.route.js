@@ -18,5 +18,6 @@ route.route("/blockedDomains")
     .post(protect, UserController.addBlockedDomain)
     .put(protect, UserController.setBlockedDomains)
     .get(protect, UserController.getBlockedDomains);
+route.post("/verificationMail", protect, UserController.resendVerificationMail);
 
 module.exports = route;

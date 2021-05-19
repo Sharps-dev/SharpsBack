@@ -2,7 +2,7 @@ const Mongoose = require("mongoose");
 const Schema = Mongoose.Schema;
 
 const noContentNeeded = ['ENTER', 'EXIT'];
-const contentNeeded = ['CLICK', 'LIKE'];
+const contentNeeded = ['CLICK', 'LIKE', 'UNLIKE'];
 const eventTypes = [...contentNeeded, ...noContentNeeded];
 
 const schema = new Schema(
@@ -43,7 +43,7 @@ schema.pre("save", async function (next) {
 schema.methods.toJSON = function () {
     var obj = this.toObject();
     if (typeof this.content == "object") {
-        const contentFields = ['domain', 'tag'];
+        const contentFields = ['domain', 'tags', 'url'];
         contentFields.forEach(field => obj[field] = this.content[field]);
     }
     delete obj.content;

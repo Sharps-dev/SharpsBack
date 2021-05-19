@@ -6,6 +6,7 @@ info:
     email: sharpsbackend@gmail.com
 
 paths:
+  
   /user/blockedDomains:
     post:
       summary: adds a single domain to the user blocked list
@@ -245,6 +246,17 @@ paths:
                   total:
                     type: number
 
+  /user/verificationMail:
+    post:
+      summary: resends verification email
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: OK
+
   /user/signup:
     post:
       summary: user signup
@@ -452,8 +464,10 @@ components:
         image:
           type: string
           format: uri
-        tag:
-          type: string
+        tags:
+          type: array
+          items:
+            type: string
         likes:
           type: integer
         clicks:
@@ -469,13 +483,16 @@ components:
       properties:
         domain:
           $ref: '#/components/schemas/content/properties/url'
-        tag:
-          $ref: '#/components/schemas/content/properties/tag'
+        tags:
+          $ref: '#/components/schemas/content/properties/tags'
+        url:
+          $ref: '#/components/schemas/content/properties/url'
         eventType:
           type: string
           enum:
             - "CLICK"
             - "LIKE"
+            - "UNLIKE"
             - "ENTER"
             - "EXIT"
         createdAt:
