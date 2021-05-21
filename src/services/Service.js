@@ -4,7 +4,7 @@ class Service {
   constructor(model) {
     this.model = model;
     this.getAll = this.getAll.bind(this);
-      this.getOne = this.getOne.bind(this);
+    this.getOne = this.getOne.bind(this);
     this.insert = this.insert.bind(this);
     this.insertAll = this.insertAll.bind(this);
     this.update = this.update.bind(this);

@@ -10,7 +10,8 @@ class ContentController extends Controller {
   constructor(service) {
     super(service);
     this.insertAll = this.insertAll.bind(this);
-      this.putSuggestions = this.putSuggestions.bind(this);
+    this.putSuggestions = this.putSuggestions.bind(this);
+    this.topTrendContents = this.topTrendContents.bind(this);
   }
 
   async insertAll(req, res, next) {
@@ -21,25 +22,35 @@ class ContentController extends Controller {
     } catch (e) {
       next(new AppError("something wrong", 400));
     }
+  }
+
+  async putSuggestions(req, res, next) {
+    try {
+      const { suggesters } = req.body;
+      if (!suggesters) throw new AppError("missing field in body", 400);
+      for (const obj of suggesters) {
+        const _id = obj.userID;
+        const user = await userService.getOne({ _id });
+        if (!user) throw new AppError("invalid userID", 400);
+
+        const contentIds = obj.suggestions;
+        if (contentIds.length != 0) await userService.addSuggestions(user, contentIds);
+      }
+      return res.sendStatus(200).end();
+    } catch (err) {
+      next(err);
     }
-
-    async putSuggestions(req, res, next) {
-        try {
-            const { suggesters } = req.body;
-            if (!suggesters) throw new AppError('missing field in body', 400);
-            for (const obj of suggesters) {
-                const _id = obj.userID;
-                const user = await userService.getOne({ _id });
-                if (!user) throw new AppError('invalid userID', 400);
-
-                const contentIds = obj.suggestions;
-                if (contentIds.length != 0)
-                    await userService.addSuggestions(user, contentIds);
-            }
-            return res.sendStatus(200).end();
-
-        } catch (err) { next(err); }
+  }
+  async topTrendContents(req, res, next) {
+    try {
+      const contents = await contentService.getAll();
+      return res.status(200).json(contents).end();
+      // return res.status(200).json({ hi: "hi" }).end();
+    } catch (e) {
+      console.log(e);
+      next(e);
     }
+  }
 }
 
 module.exports = new ContentController(contentService);
