@@ -113,6 +113,7 @@ class UserService extends Service {
         results.items = [...ads.items, ...results.items, ...defaultResults.items];
         results.total += defaultResults.total + ads.total;
 
+        results.items = await contentService.setUserFields(user, results.items);
         return results;
     }
 
@@ -139,7 +140,7 @@ class UserService extends Service {
         }).execPopulate();
 
         return {
-            items: user.savedContents,
+            items: await contentService.setUserFields(user, user.savedContents),
             total
         };
     }

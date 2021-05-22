@@ -472,6 +472,8 @@ components:
           type: integer
         clicks:
           type: integer
+        isLiked:
+          type: boolean
 
     userHistory:
       type: object
