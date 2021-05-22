@@ -15,12 +15,12 @@ class Contentservce extends Service {
   }
 
   async getAll(query) {
-    if (query && query.url) this.convertUrlQuery(query);
-    else if (query) return super.getAll(query);
-    else return super.getAll({});
+      if (query.url) this.convertUrlQuery(query);
+      return super.getAll(query);
   }
   async getOne(query) {
-    if (query.url) this.convertUrlQuery(query);
+      if (query.url) this.convertUrlQuery(query);
+      return super.getOne(query);
   }
 
   async getAds() {

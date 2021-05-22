@@ -40,17 +40,16 @@ class ContentController extends Controller {
     } catch (err) {
       next(err);
     }
-  }
-  async topTrendContents(req, res, next) {
-    try {
-      const contents = await contentService.getAll();
-      return res.status(200).json(contents).end();
-      // return res.status(200).json({ hi: "hi" }).end();
-    } catch (e) {
-      console.log(e);
-      next(e);
     }
-  }
+
+    async topTrendContents(req, res, next) {
+        try {
+            let { skip, limit } = req.query;
+            const contents = await contentService.getAll({ skip, limit, sort: { 'createdAt': -1 } });
+            return res.status(200).json(contents).end();
+            // return res.status(200).json({ hi: "hi" }).end();
+        } catch (e) { console.log(e); next(e); }
+    }
 }
 
 module.exports = new ContentController(contentService);
