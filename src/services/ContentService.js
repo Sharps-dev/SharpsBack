@@ -1,5 +1,4 @@
-﻿const mongoose = require("mongoose");
-const { AppError } = require("../helpers/AppError");
+﻿const userHistoryService = new (require("./UserHistoryService"))(require("../models/UserHistory"));
 const Service = require("./Service");
 class Contentservce extends Service {
   constructor(model) {
@@ -36,6 +35,26 @@ class Contentservce extends Service {
             }
         ]
         return { items: ads, total: 1 };
+    }
+
+    async setUserFields(user, contents) {
+        const userId = user._id;
+        const contentIds = contents.map(c => c._id);
+        const likeHistories = (await userHistoryService.getAll({
+            user: userId,
+            content: { $in: contentIds },
+            eventType: 'LIKE',
+            limit: 0
+        }, 'content')).items;
+
+        contents = contents.map(content => {
+            const contentId = content._id;
+            content = JSON.parse(JSON.stringify(content));
+            content.isLiked = likeHistories.some(obj=>obj.content.equals(contentId));
+            return content;
+        });
+
+        return contents;
     }
 }
 
