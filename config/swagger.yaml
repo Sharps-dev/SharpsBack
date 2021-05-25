@@ -7,6 +7,49 @@ info:
 
 paths:
   
+  /content/search:
+    get:
+      summary: search on contents
+      tags:
+        - "Content"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: s
+          description: query string
+          schema:
+            type: string
+        - in: query
+          name: url
+          schema:
+            type: boolean
+        - in: query
+          name: title
+          schema:
+            type: boolean 
+        - in: query
+          name: skip
+          description: number of items to skip (=pages*limit)
+          schema:
+            type: number
+            default: 0
+        - in: query
+          name: limit
+          description: number of returned items
+          schema:
+            type: number
+            default: 10
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+                schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/content'
+
   /user/blockedDomains:
     post:
       summary: adds a single domain to the user blocked list

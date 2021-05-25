@@ -1,12 +1,16 @@
 ﻿const userHistoryService = new (require("./UserHistoryService"))(require("../models/UserHistory"));
 const Service = require("./Service");
+const validator = require("validator");
+
 class Contentservce extends Service {
   constructor(model) {
-    super(model);
+      super(model);
+      this.search = this.search.bind(this);
   }
 
     convertUrlQuery(query) {
-        if (!query.url.startsWith('https://')) query.url = 'https://' + query.url;
+        if (!query.url.startsWith('https://') && !query.url.startsWith('http://'))
+            query.url = 'https://' + query.url;
         const url = new URL(query.url);
         query.domain = url.hostname;
         query.path = url.pathname;
@@ -55,6 +59,37 @@ class Contentservce extends Service {
         });
 
         return contents;
+    }
+
+    async search(queryString, searchOn, { limit, skip }) {
+        const queryArray = searchOn.map(field => {
+            const obj = {};
+            obj[field] = { $regex: queryString, $options: 'i' }
+            return obj;
+        });
+
+        if (searchOn.includes('url')) {
+            const queryObj = queryArray.find(obj => obj.url);
+
+            if (validator.isURL(queryString)) {
+                const urlObj = { url: queryString };
+                this.convertUrlQuery(urlObj);//what if path is empty?
+                queryObj.domain = { $regex: urlObj.domain, $options: 'i' }
+                queryObj.path = { $regex: urlObj.path, $options: 'i' }
+            }
+            else {
+                queryObj.domain = { $regex: queryString, $options: 'i' };
+                queryArray.push({ path: { $regex: queryString, $options: 'i' } });
+            }
+            delete queryObj.url;
+        }
+
+        return await this.getAll({
+            limit,
+            skip,
+            sort: { 'createdAt': -1 },
+            $or: queryArray
+        });
     }
 }
 

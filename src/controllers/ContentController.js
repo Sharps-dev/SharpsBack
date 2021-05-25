@@ -2,7 +2,6 @@
 const ContentService = require("../services/ContentService");
 const Content = require("../models/Content");
 const { AppError } = require("../helpers/AppError");
-const validUrl = require("valid-url");
 const contentService = new ContentService(Content);
 const userService = new (require("../services/UserService"))(require("../models/User"));
 
@@ -11,6 +10,7 @@ class ContentController extends Controller {
     super(service);
     this.insertAll = this.insertAll.bind(this);
       this.putSuggestions = this.putSuggestions.bind(this);
+      this.search = this.search.bind(this);
   }
 
   async insertAll(req, res, next) {
@@ -37,6 +37,24 @@ class ContentController extends Controller {
                     await userService.addSuggestions(user, contentIds);
             }
             return res.sendStatus(200).end();
+
+        } catch (err) { next(err); }
+    }
+
+    async search(req, res, next) {
+        const SEARCHABLES = ['url', 'title'];
+        try {
+            const { s: queryString, limit, skip } = req.query;
+            if (!queryString)
+                return res.status(200)
+                    .json(await this.service.getAll({ limit, skip, sort: { 'createdAt': -1 } })).end
+
+            let searchOn = SEARCHABLES.filter(field => req.query[field] === 'true');
+            if (searchOn.length == 0) searchOn = SEARCHABLES;
+
+            const results = await this.service.search(queryString, searchOn, { limit, skip });
+            results.items = await this.service.setUserFields(req.user, results.items);
+            return res.status(200).json(results).end();
 
         } catch (err) { next(err); }
     }
