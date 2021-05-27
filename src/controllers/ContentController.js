@@ -10,8 +10,8 @@ class ContentController extends Controller {
     super(service);
     this.insertAll = this.insertAll.bind(this);
     this.topTrendContents = this.topTrendContents.bind(this);
-      this.putSuggestions = this.putSuggestions.bind(this);
-      this.search = this.search.bind(this);
+    this.putSuggestions = this.putSuggestions.bind(this);
+    this.search = this.search.bind(this);
   }
 
   async insertAll(req, res, next) {
@@ -40,37 +40,36 @@ class ContentController extends Controller {
     } catch (err) {
       next(err);
     }
-    }
-<<<<<<< HEAD
   }
 
-    async search(req, res, next) {
-        const SEARCHABLES = ['url', 'title'];
-        try {
-            const { s: queryString, limit, skip } = req.query;
-            if (!queryString)
-                return res.status(200)
-                    .json(await this.service.getAll({ limit, skip, sort: { 'createdAt': -1 } })).end
+  async search(req, res, next) {
+    const SEARCHABLES = ["url", "title"];
+    try {
+      const { s: queryString, limit, skip } = req.query;
+      if (!queryString) return res.status(200).json(await this.service.getAll({ limit, skip, sort: { createdAt: -1 } })).end;
 
-            let searchOn = SEARCHABLES.filter(field => req.query[field] === 'true');
-            if (searchOn.length == 0) searchOn = SEARCHABLES;
+      let searchOn = SEARCHABLES.filter((field) => req.query[field] === "true");
+      if (searchOn.length == 0) searchOn = SEARCHABLES;
 
-            const results = await this.service.search(queryString, searchOn, { limit, skip });
-            results.items = await this.service.setUserFields(req.user, results.items);
-            return res.status(200).json(results).end();
-
-        } catch (err) { next(err); }
-=======
-
-    async topTrendContents(req, res, next) {
-        try {
-            let { skip, limit } = req.query;
-            const contents = await contentService.getAll({ skip, limit, sort: { 'createdAt': -1 } });
-            return res.status(200).json(contents).end();
-            // return res.status(200).json({ hi: "hi" }).end();
-        } catch (e) { console.log(e); next(e); }
->>>>>>> 2ef67acfacf194bdc2decc109bdf11bac2fca51b
+      const results = await this.service.search(queryString, searchOn, { limit, skip });
+      results.items = await this.service.setUserFields(req.user, results.items);
+      return res.status(200).json(results).end();
+    } catch (err) {
+      next(err);
     }
+  }
+
+  async topTrendContents(req, res, next) {
+    try {
+      let { skip, limit } = req.query;
+      const contents = await contentService.getAll({ skip, limit, sort: { createdAt: -1 } });
+      return res.status(200).json(contents).end();
+      // return res.status(200).json({ hi: "hi" }).end();
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
 }
 
 module.exports = new ContentController(contentService);
