@@ -5,6 +5,7 @@ const protect = require("../../src/utils/jwt/protect");
 
 route.post("/many", ContentController.insertAll);
 route.put("/suggestions", ContentController.putSuggestions);
+route.get("/trend", ContentController.topTrendContents);
 route.get("/search", protect, ContentController.search);
 
 module.exports = route;
