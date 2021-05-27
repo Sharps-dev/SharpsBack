@@ -2,7 +2,6 @@
 const ContentService = require("../services/ContentService");
 const Content = require("../models/Content");
 const { AppError } = require("../helpers/AppError");
-const validUrl = require("valid-url");
 const contentService = new ContentService(Content);
 const userService = new (require("../services/UserService"))(require("../models/User"));
 
@@ -10,8 +9,13 @@ class ContentController extends Controller {
   constructor(service) {
     super(service);
     this.insertAll = this.insertAll.bind(this);
+<<<<<<< HEAD
     this.putSuggestions = this.putSuggestions.bind(this);
     this.topTrendContents = this.topTrendContents.bind(this);
+=======
+      this.putSuggestions = this.putSuggestions.bind(this);
+      this.search = this.search.bind(this);
+>>>>>>> 0d576d4b405547639973e5bc8f211d5c0b2b0442
   }
 
   async insertAll(req, res, next) {
@@ -51,6 +55,24 @@ class ContentController extends Controller {
       next(e);
     }
   }
+
+    async search(req, res, next) {
+        const SEARCHABLES = ['url', 'title'];
+        try {
+            const { s: queryString, limit, skip } = req.query;
+            if (!queryString)
+                return res.status(200)
+                    .json(await this.service.getAll({ limit, skip, sort: { 'createdAt': -1 } })).end
+
+            let searchOn = SEARCHABLES.filter(field => req.query[field] === 'true');
+            if (searchOn.length == 0) searchOn = SEARCHABLES;
+
+            const results = await this.service.search(queryString, searchOn, { limit, skip });
+            results.items = await this.service.setUserFields(req.user, results.items);
+            return res.status(200).json(results).end();
+
+        } catch (err) { next(err); }
+    }
 }
 
 module.exports = new ContentController(contentService);
