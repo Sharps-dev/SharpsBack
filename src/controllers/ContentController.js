@@ -9,13 +9,9 @@ class ContentController extends Controller {
   constructor(service) {
     super(service);
     this.insertAll = this.insertAll.bind(this);
-<<<<<<< HEAD
-    this.putSuggestions = this.putSuggestions.bind(this);
     this.topTrendContents = this.topTrendContents.bind(this);
-=======
       this.putSuggestions = this.putSuggestions.bind(this);
       this.search = this.search.bind(this);
->>>>>>> 0d576d4b405547639973e5bc8f211d5c0b2b0442
   }
 
   async insertAll(req, res, next) {
@@ -44,16 +40,8 @@ class ContentController extends Controller {
     } catch (err) {
       next(err);
     }
-  }
-  async topTrendContents(req, res, next) {
-    try {
-      const contents = await contentService.getAll();
-      return res.status(200).json(contents).end();
-      // return res.status(200).json({ hi: "hi" }).end();
-    } catch (e) {
-      console.log(e);
-      next(e);
     }
+<<<<<<< HEAD
   }
 
     async search(req, res, next) {
@@ -72,6 +60,16 @@ class ContentController extends Controller {
             return res.status(200).json(results).end();
 
         } catch (err) { next(err); }
+=======
+
+    async topTrendContents(req, res, next) {
+        try {
+            let { skip, limit } = req.query;
+            const contents = await contentService.getAll({ skip, limit, sort: { 'createdAt': -1 } });
+            return res.status(200).json(contents).end();
+            // return res.status(200).json({ hi: "hi" }).end();
+        } catch (e) { console.log(e); next(e); }
+>>>>>>> 2ef67acfacf194bdc2decc109bdf11bac2fca51b
     }
 }
 

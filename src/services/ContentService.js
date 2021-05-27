@@ -8,15 +8,6 @@ class Contentservce extends Service {
       this.search = this.search.bind(this);
   }
 
-<<<<<<< HEAD
-  convertUrlQuery(query) {
-    if (!query.url.startsWith("https://")) query.url = "https://" + query.url;
-    const url = new URL(query.url);
-    query.domain = url.hostname;
-    query.path = url.pathname;
-    delete query.url;
-  }
-=======
     convertUrlQuery(query) {
         if (!query.url.startsWith('https://') && !query.url.startsWith('http://'))
             query.url = 'https://' + query.url;
@@ -25,15 +16,14 @@ class Contentservce extends Service {
         query.path = url.pathname;
         delete query.url;
     }
->>>>>>> 0d576d4b405547639973e5bc8f211d5c0b2b0442
 
   async getAll(query) {
-    if (query && query.url) this.convertUrlQuery(query);
-    else if (query) return super.getAll(query);
-    else return super.getAll({});
+      if (query.url) this.convertUrlQuery(query);
+      return super.getAll(query);
   }
   async getOne(query) {
-    if (query.url) this.convertUrlQuery(query);
+      if (query.url) this.convertUrlQuery(query);
+      return super.getOne(query);
   }
 
     async getAds() {
@@ -70,6 +60,7 @@ class Contentservce extends Service {
 
         return contents;
     }
+<<<<<<< HEAD
 
     async search(queryString, searchOn, { limit, skip }) {
         const queryArray = searchOn.map(field => {
@@ -101,6 +92,8 @@ class Contentservce extends Service {
             $or: queryArray
         });
     }
+=======
+>>>>>>> 2ef67acfacf194bdc2decc109bdf11bac2fca51b
 }
 
 module.exports = Contentservce;
