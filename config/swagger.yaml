@@ -517,6 +517,8 @@ components:
           type: integer
         isLiked:
           type: boolean
+        isDisliked:
+          type: boolean
 
     userHistory:
       type: object
@@ -538,6 +540,8 @@ components:
             - "CLICK"
             - "LIKE"
             - "UNLIKE"
+            - "DISLIKE"
+            - "UNDISLIKE"
             - "ENTER"
             - "EXIT"
         createdAt:
