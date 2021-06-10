@@ -34,7 +34,8 @@ class Contentservce extends Service {
         image: "https://i.ibb.co/SvcwZ6s/8zs9-L1vl-400x400.jpg",
         isAd: true,
         likes: 0,
-        clicks: 0,
+        dislikes: 0,
+        clicks: 0
       },
     ];
     return { items: ads, total: 1 };
@@ -54,11 +55,23 @@ class Contentservce extends Service {
         "content"
       )
     ).items;
+    const dislikeHistories = (
+      await userHistoryService.getAll(
+        {
+          user: userId,
+          content: { $in: contentIds },
+          eventType: "DISLIKE",
+          limit: 0,
+        },
+        "content"
+      )
+    ).items;
 
     contents = contents.map((content) => {
       const contentId = content._id;
       content = JSON.parse(JSON.stringify(content));
       content.isLiked = likeHistories.some((obj) => obj.content.equals(contentId));
+      content.isDisliked = dislikeHistories.some((obj) => obj.content.equals(contentId));
       return content;
     });
 
