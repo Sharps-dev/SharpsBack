@@ -32,14 +32,14 @@ describe('userHistory tests', () => {
             let res = await request.post('/userHistory').set({ Authorization: 'Bearer ' + token }).send({ url, eventType });
             expect(res.status).to.equal(201);
         };
-        expect(await userHistoryModel.countDocuments()).to.equal(eventTypes.length - 2);//minus 2 cuz unlike deletes like
+        expect(await userHistoryModel.countDocuments()).to.equal(eventTypes.length - 4);//minus 4 cuz unlike deletes like & undislike deletes dislike
     });
 
     it("gets a user's latest histories", async () => {
         const res = await request.get('/userHistory').set({ Authorization: 'Bearer ' + token });
         expect(res.status).to.equal(200);
         const userHistories = res.body.userHistory;
-        expect(userHistories.length).to.equal(eventTypes.length - 2);
+        expect(userHistories.length).to.equal(eventTypes.length - 4);
         expect(userHistories[0].eventType).to.equal(eventTypes[eventTypes.length - 1]);//check descending order
     });
 });
