@@ -2,7 +2,7 @@ const Mongoose = require("mongoose");
 const Schema = Mongoose.Schema;
 
 const noContentNeeded = ['ENTER', 'EXIT'];
-const contentNeeded = ['CLICK', 'LIKE', 'UNLIKE'];
+const contentNeeded = ['CLICK', 'LIKE', 'UNLIKE', 'DISLIKE', 'UNDISLIKE'];
 const eventTypes = [...contentNeeded, ...noContentNeeded];
 
 const schema = new Schema(

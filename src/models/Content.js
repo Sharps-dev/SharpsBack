@@ -1,5 +1,4 @@
 const Mongoose = require("mongoose");
-const { AppError } = require("../helpers/AppError");
 const Schema = Mongoose.Schema;
 const schema = new Schema(
   {
@@ -43,6 +42,13 @@ schema.virtual('likes', {
     match: { eventType: 'LIKE' },
     count: true
 });
+schema.virtual('dislikes', {
+    ref: 'userHistory',
+    localField: '_id',
+    foreignField: 'content',
+    match: { eventType: 'DISLIKE' },
+    count: true
+});
 schema.virtual('clicks', {
     ref: 'userHistory',
     localField: '_id',
@@ -53,7 +59,9 @@ schema.virtual('clicks', {
 // methods
 
 schema.pre('find', function(next) {
-    this.populate('likes').populate('clicks');
+    this.populate('likes')
+        .populate('dislikes')
+        .populate('clicks');
     next();
 });
 
