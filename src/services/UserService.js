@@ -59,12 +59,13 @@ class UserService extends Service {
         await user.save();
     }
     
-    async getSuggestions(user, { skip = 0, limit = 10 }) {
-        const total = user.suggestions.length;
-
+    async getSuggestions(user, query, { skip = 0, limit = 10 }) {
         await user.populate({
             path: 'suggestions',
-            domain: { $nin: user.blockedDomains },
+            match: {
+                ...query,
+                domain: { $nin: user.blockedDomains }
+            },
             options: {
                 limit,
                 skip,
@@ -74,14 +75,15 @@ class UserService extends Service {
 
         return {
             items: user.suggestions,
-            total
+            total: user.suggestions.length
         };
     }
-    async getDefaultSuggestions(user, { skip = 0, limit = 10 }) {
+    async getDefaultSuggestions(user, query, { skip = 0, limit = 10 }) {
         
-        const query = {
+        query = {
             skip: Number(skip),
             limit: Number(limit),
+            ...query,
             domain: { $nin: user.blockedDomains },
             sort: { 'createdAt': -1 }
         };
@@ -93,7 +95,7 @@ class UserService extends Service {
 
         return await contentService.getAll(query);
     }
-    async getExplore(user, { skip = 0, limit = 10, showAds = 'true' }) {
+    async getExplore(user, query, { skip = 0, limit = 10, showAds = 'true' }) {
         skip = Number(skip);
         limit = Number(limit);
         const SUGGESTED_RATE = 0.7;
@@ -103,12 +105,12 @@ class UserService extends Service {
 
         let ads = showAds == 'true' ? await contentService.getAds() : { items: [], total: 0 };
 
-        let results = await this.getSuggestions(user, { skip: suggestionSkip, limit: suggestionLimit });
+        let results = await this.getSuggestions(user, query, { skip: suggestionSkip, limit: suggestionLimit });
         let otherSkip = results.items.length == 0 ? skip - results.total : 0;
         otherSkip -= ads.items.length;
         if (otherSkip < 0) otherSkip = 0;
         const otherLimit = limit - results.items.length - ads.items.length;
-        const defaultResults = await this.getDefaultSuggestions(user, { skip: otherSkip, limit: otherLimit }, results.items);
+        const defaultResults = await this.getDefaultSuggestions(user, query, { skip: otherSkip, limit: otherLimit }, results.items);
 
         results.items = [...ads.items, ...results.items, ...defaultResults.items];
         results.total += defaultResults.total + ads.total;

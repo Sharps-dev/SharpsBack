@@ -43,7 +43,7 @@ class ContentController extends Controller {
   }
 
   async search(req, res, next) {
-    const SEARCHABLES = ["url", "title"];
+    const SEARCHABLES = ["url", "title", "tags"];
     try {
       const { s: queryString, limit, skip } = req.query;
       if (!queryString) return res.status(200).json(await this.service.getAll({ limit, skip, sort: { createdAt: -1 } })).end;
