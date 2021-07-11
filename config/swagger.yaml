@@ -27,7 +27,11 @@ paths:
         - in: query
           name: title
           schema:
-            type: boolean 
+            type: boolean
+        - in: query
+          name: tags
+          schema:
+            type: boolean
         - in: query
           name: skip
           description: number of items to skip (=pages*limit)
@@ -256,6 +260,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
+        - in: query
+          name: tags[]
+          description: filter based on tags. format=> URL?...&tags[]=moz&tags[]=goje&...
+          schema:
+            type: array
+            items:
+              type: string
         - in: query
           name: skip
           description: number of items to skip (=pages*limit)

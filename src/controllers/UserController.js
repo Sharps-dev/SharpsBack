@@ -174,11 +174,17 @@ class UserController extends Controller {
 
     async getSuggestions(req, res, next) {
         try {
-
             const { user } = req;
-            let { skip, limit, showAds } = req.query;
+            let { tags, skip, limit, showAds } = req.query;
+            
+            const query = {};
+            if (tags && Array.isArray(tags)) {
+                //const validTags = contentService.model.schema.path('tags').caster.enumValues;
+                //tags = tags.filter(t => validTags.includes(t));
+                if (tags.length > 0) query.tags = { $in: tags };
+            }
 
-            const results = await this.service.getExplore(user, { skip, limit, showAds });
+            const results = await this.service.getExplore(user, query, { skip, limit, showAds });
             return res.status(200).json(results).end();
         } catch (err) { console.log(err); next(err); }
     }
